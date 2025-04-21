@@ -35,6 +35,7 @@ Seeker is a camping spot rental platform built with Node.js and Express. This pr
 ## Reviews
 - **Create**: `POST /reviews`
 - **Get Location Reviews**: `GET /reviews/:location_id`
+- **Get Average Rating**: `GET /reviews/:location_id/average`
 
 ## Image Management
 - **Upload**: `POST /upload`

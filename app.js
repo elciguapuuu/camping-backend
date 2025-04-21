@@ -9,8 +9,9 @@ const multer = require('multer');
 const db = require('./config/db');
 const cors = require('cors');
 const passport = require('./config/passport');
+const bodyParser = require('body-parser');
 
-
+// Import routes
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const authRouter = require('./routes/auth');
@@ -18,6 +19,7 @@ const locationsRouter = require('./routes/locations');
 const bookingsRouter = require('./routes/bookings');
 const reviewsRouter = require('./routes/reviews');
 const imagesRouter = require('./routes/images');
+
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -33,10 +35,10 @@ app.use(session({
   cookie: { secure: process.env.NODE_ENV === 'production' }
 }));
 
-
 app.use(logger('dev'));
 app.use(cors()); 
 app.use(express.json());
+app.use(bodyParser.json());
 
 app.use((req, res, next) => {
   console.log('Request Body:', req.body);
@@ -52,13 +54,15 @@ app.use('/uploads/images', express.static(path.join(__dirname, 'uploads', 'image
 app.use(passport.initialize());
 app.use(passport.session());
 
+// Define routes
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/auth', authRouter);
 app.use('/locations', locationsRouter);
 app.use('/bookings', bookingsRouter);
 app.use('/reviews', reviewsRouter);
-app.use('/images', imagesRouter); // Change base path to '/images' for imagesRouter
+app.use('/images', imagesRouter);
+
 
 //testing db
 app.get('/test-db', async (req, res) => {

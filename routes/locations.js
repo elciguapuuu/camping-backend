@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config/db');
 const { authenticateToken } = require('../middleware/jwt');
+const { enhancedGeocode } = require('../config/geocoder');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
@@ -53,13 +54,15 @@ router.post('/', authenticateToken, async (req, res) => {
         const { 
             name, 
             description, 
-            campsite_type_id, 
+            campsitetypes_id, 
+            campsite_types,
             amenities, 
             price_per_night, 
-            latitude, 
-            longitude, 
+            address,
             city, 
-            country 
+            country,
+            latitude: manualLatitude,
+            longitude: manualLongitude 
         } = req.body;
         
         // Use user_id from JWT token
@@ -72,12 +75,36 @@ router.post('/', authenticateToken, async (req, res) => {
         if (!price_per_night) {
             return res.status(400).json({ error: "Missing price_per_night for the location." });
         }
-        if (!latitude || !longitude) {
+        if (!address) {
             return res.status(400).json({ error: "Missing latitude or longitude for the location." });
         }
         if (!city || !country) {
             return res.status(400).json({ error: "Missing city or country for the location." });
         }
+
+        let latitude, longitude;
+        
+        // If manual coordinates are provided, use them
+        if (manualLatitude && manualLongitude) {
+            latitude = manualLatitude;
+            longitude = manualLongitude;
+            console.log(`Using manually provided coordinates: ${latitude}, ${longitude}`);
+        } else {
+            // Geocode the address
+            const geocodeResult = await enhancedGeocode(address, city, country);
+            
+            if (!geocodeResult.success) {
+                return res.status(400).json({ 
+                    error: "Could not geocode the provided address. Please check the address or provide coordinates manually.",
+                    details: geocodeResult.error
+                });
+            }
+            
+            latitude = geocodeResult.latitude;
+            longitude = geocodeResult.longitude;
+            console.log(`Successfully geocoded to: ${latitude}, ${longitude}`);
+        }
+
 
         connection = await db.getConnection();
         await connection.beginTransaction();
@@ -85,19 +112,29 @@ router.post('/', authenticateToken, async (req, res) => {
         // Insert new location with additional fields
         const [locationResult] = await connection.query(
             `INSERT INTO Locations 
-            (user_id, name, description, price_per_night, latitude, longitude, city, country) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-            [user_id, name, description || null, price_per_night, latitude, longitude, city, country]
+            (user_id, name, description, address, price_per_night, latitude, longitude, city, country) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [user_id, name, description || null, address, price_per_night, latitude, longitude, city, country]
         );
 
         const location_id = locationResult.insertId;
 
-        // Link location to campsite type
-        if (campsite_type_id) {
-            await connection.query(
-                'INSERT INTO LocationCampsiteTypes (location_id, campsite_type_id) VALUES (?, ?)',
-                [location_id, campsite_type_id]
+        // Link location to campsite types
+        if (campsite_types && campsite_types.length > 0) {
+          // Handle multiple campsite types
+          const campsiteTypesPromises = campsite_types.map(type_id => {
+            return connection.query(
+              'INSERT INTO LocationCampsiteTypes (location_id, campsitetypes_id) VALUES (?, ?)',
+              [location_id, parseInt(type_id)]
             );
+          });
+          await Promise.all(campsiteTypesPromises);
+        } 
+        else if (campsite_type_id) {
+          await connection.query(
+            'INSERT INTO LocationCampsiteTypes (location_id, campsitetypes_id) VALUES (?, ?)',
+            [location_id, parseInt(campsite_type_id)]
+          );
         }
 
         // Link location to selected amenities
@@ -130,15 +167,16 @@ router.post('/', authenticateToken, async (req, res) => {
 router.get('/search', async (req, res) => {
     try {
         const { 
+            query, 
             price_min, 
             price_max, 
             amenities,
             campsite_type,
-            city,
-            country 
+            start_date,
+            end_date
         } = req.query;
 
-        let query = `
+        let sqlQuery = `
             SELECT DISTINCT l.* 
             FROM Locations l
             LEFT JOIN LocationAmenities la ON l.location_id = la.location_id
@@ -147,34 +185,53 @@ router.get('/search', async (req, res) => {
         `;
         const values = [];
 
+        // Search by query (name, city, country)
+        if (query) {
+            sqlQuery += ` AND (l.name LIKE ? OR l.city LIKE ? OR l.country LIKE ?)`;
+            values.push(`%${query}%`, `%${query}%`, `%${query}%`);
+        }
+
         if (price_min) {
-            query += ' AND l.price_per_night >= ?';
+            sqlQuery += ' AND l.price_per_night >= ?';
             values.push(price_min);
         }
         if (price_max) {
-            query += ' AND l.price_per_night <= ?';
+            sqlQuery += ' AND l.price_per_night <= ?';
             values.push(price_max);
         }
         if (amenities) {
-            query += ' AND la.amenity_id IN (?)';
+            sqlQuery += ' AND la.amenity_id IN (?)';
             values.push(amenities.split(','));
         }
         if (campsite_type) {
-            query += ' AND lct.campsite_type_id = ?';
+            sqlQuery += ' AND lct.campsitetypes_id = ?';
             values.push(campsite_type);
         }
-        if (city) {
-            query += ' AND l.city LIKE ?';
-            values.push(`%${city}%`);
-        }
-        if (country) {
-            query += ' AND l.country LIKE ?';
-            values.push(`%${country}%`);
+
+        // Filter by availability if dates provided
+        if (start_date && end_date) {
+            sqlQuery += ` AND l.location_id NOT IN (
+                SELECT location_id FROM Bookings 
+                WHERE (start_date <= ? AND end_date >= ?) 
+                OR (start_date <= ? AND end_date >= ?) 
+                OR (start_date >= ? AND end_date <= ?)
+                AND status_id != (SELECT status_id FROM Status WHERE status_name = 'cancelled')
+            )`;
+            values.push(
+                end_date, start_date, // Booking starts before checkout and ends after checkin
+                start_date, start_date, // Booking starts before checkin and ends after checkin
+                start_date, end_date   // Booking is completely within requested period
+            );
         }
 
-        const [locations] = await db.query(query, values);
+        console.log('Executing SQL query:', sqlQuery);
+        console.log('With values:', values);
+
+        const [locations] = await db.query(sqlQuery, values);
+        console.log(`Found ${locations.length} locations`);
         res.json(locations);
     } catch (err) {
+        console.error('Error in search endpoint:', err);
         res.status(500).json({ error: err.message });
     }
 });
@@ -216,7 +273,11 @@ router.put('/:id', authenticateToken, async (req, res) => {
       city,
       country,
       latitude,
-      longitude
+      longitude,
+      address,
+      campsite_type_id,
+      campsite_types
+
     } = req.body;
     
     // Check ownership
@@ -244,6 +305,11 @@ router.put('/:id', authenticateToken, async (req, res) => {
     if (description) {
       updates.push('description = ?');
       values.push(description);
+
+    }
+    if (address) {
+      updates.push('address = ?');
+      values.push(address);
     }
     if (price_per_night) {
       updates.push('price_per_night = ?');
@@ -274,11 +340,52 @@ router.put('/:id', authenticateToken, async (req, res) => {
         values
       );
     }
+
+    connection = await db.getConnection();
+    await connection.beginTransaction();
+
+    // If campsite types are provided, update them
+    if (campsite_types && campsite_types.length > 0) {
+      // First delete existing campsite types
+      await connection.query(
+        'DELETE FROM LocationCampsiteTypes WHERE location_id = ?',
+        [locationId]
+      );
+      
+      // Then add the new ones
+      const campsiteTypesPromises = campsite_types.map(type_id => {
+        return connection.query(
+          'INSERT INTO LocationCampsiteTypes (location_id, campsitetypes_id) VALUES (?, ?)',
+          [locationId, parseInt(type_id)]
+        );
+      });
+      
+      await Promise.all(campsiteTypesPromises);
+    }
+    // For backward compatibility - single type
+    else if (campsite_type_id) {
+      // Clear existing types
+      await connection.query(
+        'DELETE FROM LocationCampsiteTypes WHERE location_id = ?',
+        [locationId]
+      );
+      
+      // Add the single type
+      await connection.query(
+        'INSERT INTO LocationCampsiteTypes (location_id, campsitetypes_id) VALUES (?, ?)',
+        [locationId, parseInt(campsite_type_id)]
+      );
+    }
     
+    await connection.commit();
     res.json({ message: 'Location updated successfully' });
+    
   } catch (error) {
+    if (connection) await connection.rollback();
     console.error('Error updating location:', error);
     res.status(500).json({ error: error.message });
+  } finally {
+    if (connection) connection.release();
   }
 });
 
@@ -585,6 +692,74 @@ router.get('/:location_id/amenities', async (req, res) => {
       error: error.message,
       sqlMessage: error.sqlMessage || 'No SQL details available'
     });
+  }
+});
+
+router.get('/:id/campsitetype', async (req, res) => {
+  let connection;
+  try {
+    const locationId = req.params.id;
+    
+    connection = await db.getConnection();
+    
+    // Get all campsite types for this location
+    const [types] = await connection.query(
+      `SELECT ct.campsitetypes_id, ct.name 
+       FROM CampsiteTypes ct
+       JOIN LocationCampsiteTypes lct ON ct.campsitetypes_id = lct.campsitetypes_id
+       WHERE lct.location_id = ?`,
+      [locationId]
+    );
+    
+    res.json(types);
+    
+  } catch (error) {
+    console.error('Error fetching campsite types:', error);
+    res.status(500).json({ error: error.message });
+  } finally {
+    if (connection) connection.release();
+  }
+});
+
+router.get('/:id', async (req, res) => {
+  let connection;
+  try {
+    const locationId = req.params.id;
+    
+    connection = await db.getConnection();
+    
+    // Get location details
+    const [locations] = await connection.query(
+      'SELECT * FROM Locations WHERE location_id = ?',
+      [locationId]
+    );
+    
+    if (locations.length === 0) {
+      return res.status(404).json({ error: 'Location not found' });
+    }
+    
+    const location = locations[0];
+    
+    // Get campsite types
+    const [campsiteTypes] = await connection.query(
+      `SELECT ct.campsitetypes_id, ct.name 
+       FROM CampsiteTypes ct
+       JOIN LocationCampsiteTypes lct ON ct.campsitetypes_id = lct.campsitetypes_id
+       WHERE lct.location_id = ?`,
+      [locationId]
+    );
+    
+    location.campsite_types = campsiteTypes;
+    
+   
+    
+    res.json(location);
+    
+  } catch (error) {
+    console.error('Error fetching location details:', error);
+    res.status(500).json({ error: error.message });
+  } finally {
+    if (connection) connection.release();
   }
 });
 

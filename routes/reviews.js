@@ -29,6 +29,16 @@ router.post('/', authenticateToken, async (req, res) => {
             return res.status(403).json({ error: "You can only review your own bookings." });
         }
 
+        // Check if the user already has a review for this location and booking
+        const [existingReviews] = await db.query(
+            'SELECT * FROM Reviews WHERE user_id = ? AND location_id = ? AND booking_id = ?',
+            [user_id, location_id, booking_id]
+        );
+
+        if (existingReviews.length > 0) {
+            return res.status(400).json({ error: "You have already reviewed this booking." });
+        }
+
         // Insert the review into the database
         const [result] = await db.query(
             'INSERT INTO Reviews (user_id, location_id, booking_id, overall_rating, review_comment) VALUES (?, ?, ?, ?, ?)',
@@ -72,6 +82,45 @@ router.get('/:location_id', async (req, res) => {
         res.json({ 
             message: `Found ${reviews.length} review(s)`,
             reviews 
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Get average rating for a location - Public
+router.get('/:location_id/average', async (req, res) => {
+    try {
+        const { location_id } = req.params;
+        
+        // Check if location exists
+        const [location] = await db.query('SELECT location_id FROM Locations WHERE location_id = ?', [location_id]);
+        
+        if (location.length === 0) {
+            return res.status(404).json({ error: "Location not found" });
+        }
+
+        // Get average rating and count
+        const [result] = await db.query(`
+            SELECT 
+                AVG(overall_rating) as averageRating, 
+                COUNT(*) as reviewCount
+            FROM Reviews
+            WHERE location_id = ?
+            GROUP BY location_id`, 
+            [location_id]
+        );
+
+        if (result.length === 0) {
+            return res.json({ 
+                averageRating: 0,
+                reviewCount: 0
+            });
+        }
+
+        res.json({ 
+            averageRating: parseFloat(result[0].averageRating),
+            reviewCount: result[0].reviewCount
         });
     } catch (err) {
         res.status(500).json({ error: err.message });

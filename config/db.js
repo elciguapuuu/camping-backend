@@ -1,6 +1,7 @@
 require('dotenv').config();
-const mysql = require('mysql2');
+const mysql = require('mysql2/promise');
 
+// Create connection pool
 const pool = mysql.createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
@@ -12,14 +13,19 @@ const pool = mysql.createPool({
   queueLimit: 0,
 });
 
-pool.getConnection((err, connection) => {
-  if (err) {
-    console.error('Database connection failed:', err.message);
-  } else {
-    console.log('Connected to MySQL database');
+// Initialize database schema if needed
+async function initializeDatabase() {
+  try {
+    const connection = await pool.getConnection();
+    // Database initialization code (if needed)
     connection.release();
+  } catch (error) {
+    console.error('Database initialization error:', error);
   }
-});
+}
 
-module.exports = pool.promise();
+// Initialize database on server start
+initializeDatabase();
+
+module.exports = pool;
 

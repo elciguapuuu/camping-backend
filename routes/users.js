@@ -1,23 +1,32 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../config/db');
-const bcrypt = require('bcrypt');
-const { authenticateToken } = require('../middleware/jwt');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const bcrypt = require('bcrypt');
+const { authenticateToken } = require('../middleware/jwt');
+const db = require('../config/db');
 
-//Image storage for profile pictures
-const profileStorage = multer.diskStorage({
+// Set up storage for profile pictures
+const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'uploads/profile-pictures');
+    const uploadDir = 'uploads/profiles';
+    
+    // Create directory if it doesn't exist
+    if (!fs.existsSync(uploadDir)){
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+    
+    cb(null, uploadDir);
   },
   filename: (req, file, cb) => {
-    cb(null, 'profile-' + Date.now() + path.extname(file.originalname));
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const ext = path.extname(file.originalname);
+    cb(null, 'profile-' + uniqueSuffix + ext);
   }
 });
 
-const uploadProfilePicture = multer({ storage: profileStorage });
+const upload = multer({ storage: storage });
 
 // Get all users - Protected admin route
 router.get('/', authenticateToken, async (req, res) => {
@@ -37,11 +46,16 @@ router.get('/:id', authenticateToken, async (req, res) => {
             return res.status(403).json({ error: "Access denied: You can only view your own profile" });
         }
         
-        const [user] = await db.query('SELECT * FROM Users WHERE user_id = ?', [req.params.id]);
-        if (user.length === 0) {
+        const [users] = await db.query(
+            'SELECT user_id, name, email, profile_picture_url, auth_type FROM Users WHERE user_id = ?', 
+            [req.params.id]
+        );
+        
+        if (users.length === 0) {
             return res.status(404).json({ error: "User not found" });
         }
-        res.json(user[0]);
+        
+        res.json(users[0]);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -139,22 +153,81 @@ router.delete('/delete', authenticateToken, async (req, res) => {
 
         // Compare the provided password with the stored hashed password
         const isPasswordValid = await bcrypt.compare(password, user.password);
-
+        
         if (!isPasswordValid) {
             return res.status(401).json({ error: 'Incorrect password.' });
         }
-
-        // Delete the user account from the database
-        await db.query('DELETE FROM Users WHERE user_id = ?', [user_id]);
-
-        res.status(200).json({ message: 'User account deleted successfully.' });
+        
+        // If user has profile picture, delete it
+        if (user.profile_picture_url) {
+            const imagePath = path.join(__dirname, '..', user.profile_picture_url);
+            if (fs.existsSync(imagePath)) {
+                fs.unlinkSync(imagePath);
+            }
+        }
+        
+       
+        const connection = await db.getConnection();
+        await connection.beginTransaction();
+        
+        try {
+            // Delete user's reviews
+            await connection.query('DELETE FROM Reviews WHERE user_id = ?', [user_id]);
+            
+            // Delete user's bookings
+            await connection.query('DELETE FROM Bookings WHERE user_id = ?', [user_id]);
+            
+            // For locations owned by this user:
+            // 1. Get all locations owned by the user
+            const [locations] = await connection.query('SELECT location_id FROM Locations WHERE user_id = ?', [user_id]);
+            
+            // 2. For each location, delete associated records
+            for (const location of locations) {
+                const locationId = location.location_id;
+                
+                // Delete location amenities
+                await connection.query('DELETE FROM LocationAmenities WHERE location_id = ?', [locationId]);
+                
+                // Delete location campsite types
+                await connection.query('DELETE FROM LocationCampsiteTypes WHERE location_id = ?', [locationId]);
+                
+                // Get images to delete files
+                const [images] = await connection.query('SELECT * FROM Images WHERE location_id = ?', [locationId]);
+                
+                // Delete image files
+                for (const image of images) {
+                    const imagePath = path.join(__dirname, '..', image.image_url);
+                    if (fs.existsSync(imagePath)) {
+                        fs.unlinkSync(imagePath);
+                    }
+                }
+                
+                // Delete images from database
+                await connection.query('DELETE FROM Images WHERE location_id = ?', [locationId]);
+            }
+            
+            // Delete all locations owned by the user
+            await connection.query('DELETE FROM Locations WHERE user_id = ?', [user_id]);
+            
+            // Finally delete the user
+            await connection.query('DELETE FROM Users WHERE user_id = ?', [user_id]);
+            
+            await connection.commit();
+            
+            res.json({ message: 'Account deleted successfully.' });
+        } catch (error) {
+            await connection.rollback();
+            throw error;
+        } finally {
+            connection.release();
+        }
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
 
 // Add new route for uploading profile pictures
-router.post('/:id/profile-picture', authenticateToken, uploadProfilePicture.single('profile_picture'), async (req, res) => {
+router.post('/:id/profile-picture', authenticateToken, upload.single('profile_picture'), async (req, res) => {
   try {
     // Check if user is updating their own profile
     if (req.user.id != req.params.id) {
@@ -189,6 +262,26 @@ router.post('/:id/profile-picture', authenticateToken, uploadProfilePicture.sing
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+// New endpoint: Get current user profile
+router.get('/me/profile', authenticateToken, async (req, res) => {
+  try {
+    const [users] = await db.query(
+      'SELECT user_id, name, email, auth_type, profile_picture_url FROM users WHERE user_id = ?',
+      [req.user.id]
+    );
+
+    if (users.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const user = users[0];
+    res.json(user);
+  } catch (err) {
+    console.error('Error getting current user profile:', err);
+    res.status(500).json({ error: 'Failed to get user profile' });
   }
 });
 

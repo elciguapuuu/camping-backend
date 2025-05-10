@@ -19,6 +19,7 @@ const locationsRouter = require('./routes/locations');
 const bookingsRouter = require('./routes/bookings');
 const reviewsRouter = require('./routes/reviews');
 const imagesRouter = require('./routes/images');
+const paymentsRouter = require('./routes/payments'); // Add this line
 
 
 const app = express();
@@ -62,6 +63,7 @@ app.use('/locations', locationsRouter);
 app.use('/bookings', bookingsRouter);
 app.use('/reviews', reviewsRouter);
 app.use('/images', imagesRouter);
+app.use('/api/payments', paymentsRouter); // Add this line
 
 
 //testing db

@@ -4,26 +4,10 @@ const db = require('../config/db');
 const { authenticateToken } = require('../middleware/jwt');
 const { enhancedGeocode } = require('../config/geocoder');
 const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
+const cloudinary = require('../config/cloudinary'); // Add Cloudinary
 
-// Configure storage
-const storage = multer.diskStorage({
-  destination: function(req, file, cb) {
-    
-    const uploadDir = path.join(__dirname, '../uploads/location-images');
-    
-    //create directory if it doesn't exist
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-    
-    cb(null, uploadDir);
-  },
-  filename: function(req, file, cb) {
-    cb(null, Date.now() + '-' + file.originalname);
-  }
-});
+// Configure storage for Multer to use memory storage for Cloudinary
+const storage = multer.memoryStorage(); // Changed from diskStorage to memoryStorage
 
 const upload = multer({ 
   storage: storage,
@@ -62,7 +46,9 @@ router.post('/', authenticateToken, async (req, res) => {
             city, 
             country,
             latitude: manualLatitude,
-            longitude: manualLongitude 
+            longitude: manualLongitude,
+            booking_policy, // Added
+            service_fee_percentage // Added
         } = req.body;
         
         // Use user_id from JWT token
@@ -112,9 +98,10 @@ router.post('/', authenticateToken, async (req, res) => {
         // Insert new location with additional fields
         const [locationResult] = await connection.query(
             `INSERT INTO Locations 
-            (user_id, name, description, address, price_per_night, latitude, longitude, city, country) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [user_id, name, description || null, address, price_per_night, latitude, longitude, city, country]
+            (user_id, name, description, address, price_per_night, latitude, longitude, city, country, booking_policy, service_fee_percentage) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+
+            [user_id, name, description || null, address, price_per_night, latitude, longitude, city, country, booking_policy || null, service_fee_percentage !== undefined ? service_fee_percentage : 10.00] // Added booking_policy and service_fee_percentage
         );
 
         const location_id = locationResult.insertId;
@@ -240,146 +227,193 @@ router.get('/search', async (req, res) => {
 router.get('/owner/:userId', authenticateToken, async (req, res) => {
     try {
         //Check if user is requesting their own locations
-        if (req.user.id != req.params.userId) {
+        if (parseInt(req.user.id) !== parseInt(req.params.userId)) {
             return res.status(403).json({ error: "Access denied: You can only view your own locations" });
         }
         
         const [locations] = await db.query(`
-            SELECT l.*, 
-                   COUNT(DISTINCT b.booking_id) as total_bookings,
-                   COUNT(DISTINCT r.review_id) as total_reviews,
-                   AVG(r.overall_rating) as average_rating
+            SELECT
+                l.*,
+                COALESCE(l.price_per_night, 0) as price_per_night, /* Ensure price_per_night is included */
+                COUNT(DISTINCT b_all.booking_id) AS total_bookings, /* Counts all bookings for the location */
+                COALESCE(AVG(r.overall_rating), 0) AS average_rating,
+                COUNT(DISTINCT r.review_id) AS total_reviews,
+                COALESCE((SELECT SUM(bk.total_price)
+                    FROM Bookings bk
+                    JOIN Status s ON bk.status_id = s.status_id
+                    WHERE bk.location_id = l.location_id
+                    AND s.status_name = 'completed'
+                    AND bk.end_date BETWEEN DATE_SUB(CURDATE(), INTERVAL 7 DAY) AND CURDATE()
+                ), 0) AS earnings_last_week,
+                COALESCE((SELECT SUM(bk.total_price)
+                    FROM Bookings bk
+                    JOIN Status s ON bk.status_id = s.status_id
+                    WHERE bk.location_id = l.location_id
+                    AND s.status_name = 'completed'
+                    AND bk.end_date BETWEEN DATE_SUB(CURDATE(), INTERVAL 1 MONTH) AND CURDATE()
+                ), 0) AS earnings_last_month,
+                COALESCE((SELECT SUM(bk.total_price)
+                    FROM Bookings bk
+                    JOIN Status s ON bk.status_id = s.status_id
+                    WHERE bk.location_id = l.location_id
+                    AND s.status_name = 'completed'
+                    AND bk.end_date BETWEEN DATE_SUB(CURDATE(), INTERVAL 1 YEAR) AND CURDATE()
+                ), 0) AS earnings_last_year
             FROM Locations l
-            LEFT JOIN Bookings b ON l.location_id = b.location_id
+            LEFT JOIN Bookings b_all ON l.location_id = b_all.location_id /* Alias for total bookings count */
             LEFT JOIN Reviews r ON l.location_id = r.location_id
             WHERE l.user_id = ?
-            GROUP BY l.location_id
+            GROUP BY l.location_id 
+            ORDER BY l.created_at DESC
         `, [req.params.userId]);
         
-        res.json(locations);
+        // Ensure correct data types for numeric fields
+        const processedLocations = locations.map(loc => ({
+            ...loc,
+            price_per_night: parseFloat(parseFloat(loc.price_per_night).toFixed(2)),
+            average_rating: parseFloat(parseFloat(loc.average_rating).toFixed(1)), // Typically 1 decimal for rating
+            total_reviews: parseInt(loc.total_reviews),
+            total_bookings: parseInt(loc.total_bookings),
+            earnings_last_week: parseFloat(parseFloat(loc.earnings_last_week).toFixed(2)),
+            earnings_last_month: parseFloat(parseFloat(loc.earnings_last_month).toFixed(2)),
+            earnings_last_year: parseFloat(parseFloat(loc.earnings_last_year).toFixed(2)),
+        }));
+        
+        res.json(processedLocations);
     } catch (err) {
+        console.error("Error fetching owner locations:", err); 
         res.status(500).json({ error: err.message });
     }
 });
 
 // Update a location - Protected with ownership check
 router.put('/:id', authenticateToken, async (req, res) => {
+  let connection; // Declare connection here to be accessible in finally
   try {
     const locationId = req.params.id;
-    const { 
-      name, 
-      description, 
-      price_per_night, 
+    const {
+      name,
+      description,
+      price_per_night,
       city,
       country,
       latitude,
       longitude,
       address,
-      campsite_type_id,
-      campsite_types
-
+      campsite_type_id, // single for backward compatibility
+      campsite_types,   // array for multiple
+      amenities, // Added for updating amenities
+      booking_policy, // Added
+      service_fee_percentage, // Added
+      images_to_delete  // Array of public_ids of images to delete
     } = req.body;
-    
-    // Check ownership
-    const [locationOwner] = await db.query(
-      'SELECT user_id FROM Locations WHERE location_id = ?',
-      [locationId]
-    );
-    
-    if (locationOwner.length === 0) {
-      return res.status(404).json({ error: 'Location not found' });
-    }
-    
-    if (locationOwner[0].user_id != req.user.id) {
-      return res.status(403).json({ error: 'Access denied: You can only update your own locations' });
-    }
-    
-    //update querys
-    const updates = [];
-    const values = [];
-    
-    if (name) {
-      updates.push('name = ?');
-      values.push(name);
-    }
-    if (description) {
-      updates.push('description = ?');
-      values.push(description);
-
-    }
-    if (address) {
-      updates.push('address = ?');
-      values.push(address);
-    }
-    if (price_per_night) {
-      updates.push('price_per_night = ?');
-      values.push(price_per_night);
-    }
-    if (city) {
-      updates.push('city = ?');
-      values.push(city);
-    }
-    if (country) {
-      updates.push('country = ?');
-      values.push(country);
-    }
-    if (latitude) {
-      updates.push('latitude = ?');
-      values.push(latitude);
-    }
-    if (longitude) {
-      updates.push('longitude = ?');
-      values.push(longitude);
-    }
-    
-    //proceed if there are updates
-    if (updates.length > 0) {
-      values.push(locationId);
-      await db.query(
-        `UPDATE Locations SET ${updates.join(', ')} WHERE location_id = ?`, 
-        values
-      );
-    }
 
     connection = await db.getConnection();
     await connection.beginTransaction();
 
-    // If campsite types are provided, update them
-    if (campsite_types && campsite_types.length > 0) {
-      // First delete existing campsite types
-      await connection.query(
-        'DELETE FROM LocationCampsiteTypes WHERE location_id = ?',
-        [locationId]
-      );
-      
-      // Then add the new ones
-      const campsiteTypesPromises = campsite_types.map(type_id => {
-        return connection.query(
-          'INSERT INTO LocationCampsiteTypes (location_id, campsitetypes_id) VALUES (?, ?)',
-          [locationId, parseInt(type_id)]
-        );
-      });
-      
-      await Promise.all(campsiteTypesPromises);
+    // Check ownership
+    const [locationOwnerRows] = await connection.query(
+      'SELECT user_id FROM Locations WHERE location_id = ?',
+      [locationId]
+    );
+
+    if (locationOwnerRows.length === 0) {
+      await connection.rollback();
+      return res.status(404).json({ error: 'Location not found' });
     }
-    // For backward compatibility - single type
-    else if (campsite_type_id) {
-      // Clear existing types
+
+    if (locationOwnerRows[0].user_id != req.user.id) {
+      await connection.rollback();
+      return res.status(403).json({ error: 'Access denied: You can only update your own locations' });
+    }
+
+    // Handle image deletions
+    if (images_to_delete && Array.isArray(images_to_delete) && images_to_delete.length > 0) {
+      for (const publicIdToDelete of images_to_delete) {
+        if (publicIdToDelete) {
+          // Verify the image belongs to the location before deleting
+          const [imageRow] = await connection.query(
+            'SELECT image_id FROM Images WHERE public_id = ? AND location_id = ?',
+            [publicIdToDelete, locationId]
+          );
+
+          if (imageRow.length > 0) {
+            // Delete from Cloudinary
+            try {
+              await cloudinary.uploader.destroy(publicIdToDelete);
+              console.log(`Deleted image ${publicIdToDelete} from Cloudinary for location ${locationId}`);
+            } catch (cloudinaryError) {
+              console.error(`Error deleting image ${publicIdToDelete} from Cloudinary:`, cloudinaryError);
+              // Depending on policy, you might want to throw an error here to cause a rollback
+            }
+            // Delete from database
+            await connection.query(
+              'DELETE FROM Images WHERE public_id = ? AND location_id = ?',
+              [publicIdToDelete, locationId]
+            );
+            console.log(`Deleted image ${publicIdToDelete} from database for location ${locationId}`);
+          } else {
+            console.warn(`Image with public_id ${publicIdToDelete} not found for location ${locationId} or does not belong to it. Skipping deletion.`);
+          }
+        }
+      }
+    }
+
+    // Update location details
+    const updates = [];
+    const values = [];
+
+    if (req.body.hasOwnProperty('name')) { updates.push('name = ?'); values.push(name); }
+    if (req.body.hasOwnProperty('description')) { updates.push('description = ?'); values.push(description); }
+    if (req.body.hasOwnProperty('address')) { updates.push('address = ?'); values.push(address); }
+    if (req.body.hasOwnProperty('price_per_night')) { updates.push('price_per_night = ?'); values.push(price_per_night); }
+    if (req.body.hasOwnProperty('city')) { updates.push('city = ?'); values.push(city); }
+    if (req.body.hasOwnProperty('country')) { updates.push('country = ?'); values.push(country); }
+    if (req.body.hasOwnProperty('latitude')) { updates.push('latitude = ?'); values.push(latitude); }
+    if (req.body.hasOwnProperty('longitude')) { updates.push('longitude = ?'); values.push(longitude); }
+    if (req.body.hasOwnProperty('booking_policy')) { updates.push('booking_policy = ?'); values.push(booking_policy); }
+    if (req.body.hasOwnProperty('service_fee_percentage')) { updates.push('service_fee_percentage = ?'); values.push(service_fee_percentage); }
+
+    if (updates.length > 0) {
+      const updateValues = [...values, locationId];
       await connection.query(
-        'DELETE FROM LocationCampsiteTypes WHERE location_id = ?',
-        [locationId]
-      );
-      
-      // Add the single type
-      await connection.query(
-        'INSERT INTO LocationCampsiteTypes (location_id, campsitetypes_id) VALUES (?, ?)',
-        [locationId, parseInt(campsite_type_id)]
+        `UPDATE Locations SET ${updates.join(', ')} WHERE location_id = ?`,
+        updateValues
       );
     }
-    
+
+    // Update campsite types
+    // Only update if campsite_types or campsite_type_id is explicitly provided in the request body
+    if (req.body.hasOwnProperty('campsite_types')) {
+        await connection.query('DELETE FROM LocationCampsiteTypes WHERE location_id = ?', [locationId]);
+        if (campsite_types && campsite_types.length > 0) { // campsite_types could be an empty array to clear them
+            const campsiteTypesPromises = campsite_types.map(type_id =>
+                connection.query('INSERT INTO LocationCampsiteTypes (location_id, campsitetypes_id) VALUES (?, ?)', [locationId, parseInt(type_id)])
+            );
+            await Promise.all(campsiteTypesPromises);
+        }
+    } else if (req.body.hasOwnProperty('campsite_type_id')) { // For backward compatibility - single type
+        await connection.query('DELETE FROM LocationCampsiteTypes WHERE location_id = ?', [locationId]);
+        if (campsite_type_id !== null && campsite_type_id !== undefined && campsite_type_id !== '') { // Ensure it's a valid ID to insert
+            await connection.query('INSERT INTO LocationCampsiteTypes (location_id, campsitetypes_id) VALUES (?, ?)', [locationId, parseInt(campsite_type_id)]);
+        }
+    }
+    // If neither campsite_types nor campsite_type_id is in req.body, campsite types are not updated.
+
+    // Update amenities if provided
+    if (req.body.hasOwnProperty('amenities')) {
+        await connection.query('DELETE FROM LocationAmenities WHERE location_id = ?', [locationId]);
+        if (amenities && amenities.length > 0) {
+            const amenityPromises = amenities.map(amenity_id =>
+                connection.query('INSERT INTO LocationAmenities (location_id, amenity_id) VALUES (?, ?)', [locationId, parseInt(amenity_id)])
+            );
+            await Promise.all(amenityPromises);
+        }
+    }
+
     await connection.commit();
     res.json({ message: 'Location updated successfully' });
-    
+
   } catch (error) {
     if (connection) await connection.rollback();
     console.error('Error updating location:', error);
@@ -391,48 +425,71 @@ router.put('/:id', authenticateToken, async (req, res) => {
 
 // Delete a location - Protected with ownership check
 router.delete('/:id', authenticateToken, async (req, res) => {
+  let connection;
   try {
     const locationId = req.params.id;
     
+    connection = await db.getConnection();
+    await connection.beginTransaction();
+
     // Check if the location exists and belongs to the user
-    const [location] = await db.query(
+    const [location] = await connection.query(
       'SELECT user_id FROM Locations WHERE location_id = ?', 
       [locationId]
     );
     
     if (location.length === 0) {
+      await connection.rollback();
+      connection.release();
       return res.status(404).json({ error: 'Location not found' });
     }
     
     if (location[0].user_id !== req.user.id) {
+      await connection.rollback();
+      connection.release();
       return res.status(403).json({ error: 'You can only delete your own locations' });
     }
     
-    // Delete associated data first
-    await db.query('DELETE FROM LocationAmenities WHERE location_id = ?', [locationId]);
-    await db.query('DELETE FROM LocationCampsiteTypes WHERE location_id = ?', [locationId]);
+    // Get images to delete from Cloudinary
+    const [images] = await connection.query('SELECT public_id FROM Images WHERE location_id = ?', [locationId]);
     
-    // Get images to delete files
-    const [images] = await db.query('SELECT * FROM Images WHERE location_id = ?', [locationId]);
-    
-    // Delete image files
-    for (const image of images) {
-      const imagePath = path.join(__dirname, '..', image.image_url);
-      if (fs.existsSync(imagePath)) {
-        fs.unlinkSync(imagePath);
+    // Delete images from Cloudinary
+    if (images && images.length > 0) {
+      for (const image of images) {
+        if (image.public_id) {
+          try {
+            await cloudinary.uploader.destroy(image.public_id);
+            console.log(`Deleted image ${image.public_id} from Cloudinary`);
+          } catch (cloudinaryError) {
+            // Log the error but continue, as we still want to delete the location record
+            console.error(`Error deleting image ${image.public_id} from Cloudinary:`, cloudinaryError);
+          }
+        }
       }
     }
     
+    // Delete associated data first
+    await connection.query('DELETE FROM LocationAmenities WHERE location_id = ?', [locationId]);
+    await connection.query('DELETE FROM LocationCampsiteTypes WHERE location_id = ?', [locationId]);
     // Delete images from database
-    await db.query('DELETE FROM Images WHERE location_id = ?', [locationId]);
+    await connection.query('DELETE FROM Images WHERE location_id = ?', [locationId]);
+    // Delete bookings associated with the location
+    // Consider what to do with bookings - for now, let's assume they might need to be archived or handled differently.
+    // If direct deletion is required: await connection.query('DELETE FROM Bookings WHERE location_id = ?', [locationId]);
+    // Delete reviews associated with the location
+    await connection.query('DELETE FROM Reviews WHERE location_id = ?', [locationId]);
     
     // Delete the location
-    await db.query('DELETE FROM Locations WHERE location_id = ?', [locationId]);
+    await connection.query('DELETE FROM Locations WHERE location_id = ?', [locationId]);
     
-    res.json({ message: 'Location deleted successfully' });
+    await connection.commit();
+    res.json({ message: 'Location and associated images deleted successfully' });
   } catch (error) {
+    if (connection) await connection.rollback();
     console.error('Error deleting location:', error);
     res.status(500).json({ error: error.message });
+  } finally {
+    if (connection) connection.release();
   }
 });
 
@@ -535,62 +592,87 @@ router.get('/campsitetypes', async (req, res) => {
 
 // Image upload endpoint
 router.post('/:location_id/images', authenticateToken, upload.array('images', 10), async (req, res) => {
+  let connection;
   try {
     const { location_id } = req.params;
     
-    //debug log to help troubleshoot
     console.log(`Processing image upload for location ${location_id}`);
     
-    // Verify the location exists and belongs to the user
-    const [location] = await db.query(
+    connection = await db.getConnection();
+    await connection.beginTransaction();
+
+    const [location] = await connection.query(
       'SELECT user_id FROM Locations WHERE location_id = ?',
       [location_id]
     );
     
     if (location.length === 0) {
+      await connection.rollback();
+      connection.release();
       return res.status(404).json({ error: 'Location not found' });
     }
     
     if (location[0].user_id !== req.user.id) {
+      await connection.rollback();
+      connection.release();
       return res.status(403).json({ error: 'You can only add images to your own locations' });
     }
     
-    // Process uploaded files
     if (!req.files || req.files.length === 0) {
+      await connection.rollback();
+      connection.release();
       return res.status(400).json({ error: 'No images uploaded' });
     }
     
-    console.log(`Received ${req.files.length} images for upload`);
+    console.log(`Received ${req.files.length} images for Cloudinary upload`);
     
-    // Insert image records into database
-    
-    const imageInsertPromises = req.files.map((file, index) => {
-        const imagePath = `/uploads/location-images/${file.filename}`;
-      // Set the first image as the cover image (is_cover = 1)
-      const isCover = index === 0 ? 1 : 0;
-      
-      console.log(`Adding image: ${imagePath}, is_cover: ${isCover}`);
-      
-      return db.query(
-        'INSERT INTO Images (image_url, location_id, is_cover) VALUES (?, ?, ?)',
-        [imagePath, location_id, isCover]
-      );
+    const imageUploadPromises = req.files.map((file, index) => {
+      return new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          { folder: "location-images" }, // Optional: organize in a Cloudinary folder
+          async (error, result) => {
+            if (error) {
+              console.error('Cloudinary upload error:', error);
+              return reject(error);
+            }
+            const isCover = index === 0 ? 1 : 0;
+            console.log(`Uploaded to Cloudinary: ${result.secure_url}, public_id: ${result.public_id}`);
+            try {
+              const [insertResult] = await connection.query(
+                'INSERT INTO Images (image_url, location_id, is_cover, public_id) VALUES (?, ?, ?, ?)',
+                [result.secure_url, location_id, isCover, result.public_id]
+              );
+              resolve(insertResult);
+            } catch (dbError) {
+              console.error('Database insert error after Cloudinary upload:', dbError);
+              // If DB insert fails, try to delete the uploaded image from Cloudinary
+              cloudinary.uploader.destroy(result.public_id, (destroyError) => {
+                if (destroyError) console.error('Failed to delete orphaned Cloudinary image:', destroyError);
+              });
+              reject(dbError);
+            }
+          }
+        );
+        uploadStream.end(file.buffer);
+      });
     });
     
-    await Promise.all(imageInsertPromises);
+    await Promise.all(imageUploadPromises);
+    await connection.commit();
     
     res.status(201).json({ 
-      message: 'Images uploaded successfully',
+      message: 'Images uploaded successfully to Cloudinary and database',
       count: req.files.length
     });
   } catch (error) {
+    if (connection) await connection.rollback();
     console.error('Detailed error uploading images:', error);
-    // Send more details to help debugging
     res.status(500).json({ 
       error: error.message,
-      sqlMessage: error.sqlMessage || 'No SQL message available',
-      errorCode: error.code || 'No error code available'
+      details: error.stack // For more detailed server-side logging
     });
+  } finally {
+    if (connection) connection.release();
   }
 });
 
@@ -761,6 +843,104 @@ router.get('/:id', async (req, res) => {
   } finally {
     if (connection) connection.release();
   }
+});
+
+// Get a specific location by ID - Public
+router.get('/:id', async (req, res) => {
+    try {
+        const [location] = await db.query(`
+            SELECT 
+                l.*, 
+                COALESCE(AVG(r.overall_rating), 0) as average_rating,
+                COALESCE(COUNT(r.review_id), 0) as total_reviews
+            FROM Locations l
+            LEFT JOIN Reviews r ON l.location_id = r.location_id
+            WHERE l.location_id = ?
+            GROUP BY l.location_id
+        `, [req.params.id]);
+        
+        if (location.length === 0) {
+            return res.status(404).json({ error: 'Location not found' });
+        }
+        // Ensure numeric types for average_rating
+        location[0].average_rating = parseFloat(location[0].average_rating);
+        location[0].total_reviews = parseInt(location[0].total_reviews);
+
+        res.json(location[0]);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// GET all amenities for a specific location
+router.get('/:location_id/amenities-for-location', authenticateToken, async (req, res) => {
+  const { location_id } = req.params;
+  try {
+    const query = `
+      SELECT a.amenity_id, a.name 
+      FROM Amenities a
+      JOIN LocationAmenities la ON a.amenity_id = la.amenity_id
+      WHERE la.location_id = ?
+    `;
+    const [amenities] = await db.query(query, [location_id]);
+    res.json(amenities);
+  } catch (error) {
+    console.error('Error fetching amenities for location:', error);
+    res.status(500).json({ error: 'Failed to fetch amenities for location' });
+  }
+});
+
+// GET weekly earnings for a location
+router.get('/:location_id/earnings/weekly', authenticateToken, async (req, res) => { // Added authenticateToken
+    const { location_id } = req.params;
+    // Ensure the user requesting is the owner of the location
+    try {
+        const [locationOwnerRows] = await db.query(
+            'SELECT user_id FROM Locations WHERE location_id = ?',
+            [location_id]
+        );
+
+        if (locationOwnerRows.length === 0) {
+            return res.status(404).json({ error: 'Location not found' });
+        }
+
+        if (locationOwnerRows[0].user_id !== req.user.id) {
+            return res.status(403).json({ error: 'Access denied: You can only view earnings for your own locations' });
+        }
+    } catch (error) {
+        console.error('Error verifying location ownership for earnings:', error);
+        return res.status(500).json({ message: 'Error verifying location ownership', error: error.message });
+    }
+
+
+    const connection = await db.getConnection();
+    try {
+        // Get status_id for 'completed'
+        // Corrected to use status_id from Status table schema
+        const [statusRows] = await connection.query("SELECT status_id FROM Status WHERE status_name = 'completed' LIMIT 1");
+        if (statusRows.length === 0) {
+            return res.status(500).json({ message: "Could not find 'completed' status ID." });
+        }
+        const completedStatusId = statusRows[0].status_id; // Corrected to status_id
+
+        const query = `
+            SELECT
+                -- Calculate the start of the week (Monday)
+                DATE_FORMAT(DATE_SUB(b.end_date, INTERVAL (DAYOFWEEK(b.end_date) - 2) DAY), '%Y-%m-%d') AS week_start_date,
+                SUM(b.total_price) AS weekly_earnings
+            FROM Bookings b
+            WHERE b.location_id = ? AND b.status_id = ?
+            GROUP BY week_start_date
+            ORDER BY week_start_date ASC;
+        `;
+        const [earnings] = await connection.query(query, [location_id, completedStatusId]);
+        res.json(earnings);
+    } catch (error) {
+        console.error('Error fetching weekly earnings:', error);
+        res.status(500).json({ message: 'Error fetching weekly earnings', error: error.message });
+    } finally {
+        if (connection) connection.release();
+    }
 });
 
 module.exports = router;

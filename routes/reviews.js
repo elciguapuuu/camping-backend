@@ -19,14 +19,18 @@ router.post('/', authenticateToken, async (req, res) => {
             return res.status(400).json({ error: "Overall rating must be between 1 and 5." });
         }
 
-        // Verify the booking belongs to this user
+        // Verify the booking belongs to this user and is completed
         const [bookings] = await db.query(
-            'SELECT * FROM Bookings WHERE booking_id = ? AND user_id = ?',
+            'SELECT b.booking_id, s.status_name FROM Bookings b JOIN Status s ON b.status_id = s.status_id WHERE b.booking_id = ? AND b.user_id = ?',
             [booking_id, user_id]
         );
         
         if (bookings.length === 0) {
-            return res.status(403).json({ error: "You can only review your own bookings." });
+            return res.status(403).json({ error: "Booking not found or does not belong to you." });
+        }
+
+        if (bookings[0].status_name !== 'completed') {
+            return res.status(403).json({ error: "You can only review completed bookings." });
         }
 
         // Check if the user already has a review for this location and booking

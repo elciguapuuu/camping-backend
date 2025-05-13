@@ -6,26 +6,10 @@ const fs = require('fs');
 const bcrypt = require('bcrypt');
 const { authenticateToken } = require('../middleware/jwt');
 const db = require('../config/db');
+const cloudinary = require('../config/cloudinary'); // Import Cloudinary config
 
-// Set up storage for profile pictures
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const uploadDir = 'uploads/profiles';
-    
-    // Create directory if it doesn't exist
-    if (!fs.existsSync(uploadDir)){
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-    
-    cb(null, uploadDir);
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    const ext = path.extname(file.originalname);
-    cb(null, 'profile-' + uniqueSuffix + ext);
-  }
-});
-
+// Configure Multer for memory storage
+const storage = multer.memoryStorage(); // Use memoryStorage for Cloudinary
 const upload = multer({ storage: storage });
 
 // Get all users - Protected admin route
@@ -239,28 +223,108 @@ router.post('/:id/profile-picture', authenticateToken, upload.single('profile_pi
     }
     
     const userId = req.params.id;
-    const profilePictureUrl = `/uploads/profile-pictures/${req.file.filename}`;
-    
-    // Get current profile picture before updating
+
+    // Get current profile picture before updating to delete it from Cloudinary if it exists
     const [currentUser] = await db.query('SELECT profile_picture_url FROM Users WHERE user_id = ?', [userId]);
-    const oldProfilePicture = currentUser[0]?.profile_picture_url;
+    const oldProfilePictureUrl = currentUser[0]?.profile_picture_url;
+
+    // Upload to Cloudinary
+    cloudinary.uploader.upload_stream({ folder: "profile-pictures" }, async (error, result) => {
+      if (error) {
+        console.error('Cloudinary upload error:', error);
+        return res.status(500).json({ error: 'Failed to upload image to Cloudinary.' });
+      }
+
+      const profilePictureCloudinaryUrl = result.secure_url;
+      // const publicId = result.public_id; // Optional: Store public_id to be able to delete later
+
+      await db.query('UPDATE Users SET profile_picture_url = ? WHERE user_id = ?', [profilePictureCloudinaryUrl, userId]);
+      
+      if (oldProfilePictureUrl && oldProfilePictureUrl.includes('cloudinary.com')) {
+        try {
+          const parts = oldProfilePictureUrl.split('/');
+          const versionAndPublicIdWithExt = parts.slice(parts.indexOf('upload') + 2).join('/');
+          const publicIdToDelete = versionAndPublicIdWithExt.substring(0, versionAndPublicIdWithExt.lastIndexOf('.'));
+          if (publicIdToDelete) {
+            await cloudinary.uploader.destroy(publicIdToDelete);
+            console.log('Old profile picture deleted from Cloudinary:', publicIdToDelete);
+          }
+        } catch (deleteError) {
+          console.error('Failed to delete old profile picture from Cloudinary:', deleteError);
+        }
+      } else if (oldProfilePictureUrl) {
+        const oldPicturePath = path.join(__dirname, '..', oldProfilePictureUrl);
+        if (fs.existsSync(oldPicturePath)) {
+          fs.unlinkSync(oldPicturePath);
+        }
+      }
+      
+      res.status(200).json({ 
+        message: 'Profile picture updated successfully',
+        profile_picture_url: profilePictureCloudinaryUrl
+      });
+    }).end(req.file.buffer);
+
+  } catch (err) {
+    console.error('Error updating profile picture:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Add new route for REMOVING profile pictures
+router.delete('/:id/profile-picture', authenticateToken, async (req, res) => {
+  try {
+    // Check if user is updating their own profile
+    if (req.user.id != req.params.id) {
+      return res.status(403).json({ error: "Access denied: You can only update your own profile" });
+    }
     
-    // Update user's profile picture in database
-    await db.query('UPDATE Users SET profile_picture_url = ? WHERE user_id = ?', [profilePictureUrl, userId]);
-    
-    // Remove old profile picture if it exists
-    if (oldProfilePicture) {
-      const oldPicturePath = path.join(__dirname, '..', oldProfilePicture);
+    const userId = req.params.id;
+
+    // Get current profile picture to delete it from Cloudinary
+    const [currentUser] = await db.query('SELECT profile_picture_url FROM Users WHERE user_id = ?', [userId]);
+    const currentProfilePictureUrl = currentUser[0]?.profile_picture_url;
+
+    if (!currentProfilePictureUrl) {
+      return res.status(404).json({ error: 'No profile picture to remove.' });
+    }
+
+    // Update database first
+    await db.query('UPDATE Users SET profile_picture_url = NULL WHERE user_id = ?', [userId]);
+
+    // If the picture was on Cloudinary, delete it from there
+    if (currentProfilePictureUrl.includes('cloudinary.com')) {
+      try {
+        // Extract public_id from the Cloudinary URL
+        // Example URL: http://res.cloudinary.com/your_cloud_name/image/upload/v1234567890/profile-pictures/public_id.jpg
+        const parts = currentProfilePictureUrl.split('/');
+        // The public_id is typically the last part before the extension, within its folder structure
+        // For "profile-pictures/image_id.jpg", public_id is "profile-pictures/image_id"
+        const publicIdWithFolder = parts.slice(parts.indexOf('upload') + 2).join('/').replace(/\\.[^/.]+$/, "");
+
+        if (publicIdWithFolder) {
+          await cloudinary.uploader.destroy(publicIdWithFolder);
+          console.log('Profile picture deleted from Cloudinary:', publicIdWithFolder);
+        }
+      } catch (deleteError) {
+        console.error('Failed to delete profile picture from Cloudinary:', deleteError);
+        // Log error but don't fail the request if DB update was successful
+      }
+    } else {
+      // Handle deletion from local file system if it was a local path (legacy or fallback)
+      const oldPicturePath = path.join(__dirname, '..', currentProfilePictureUrl);
       if (fs.existsSync(oldPicturePath)) {
         fs.unlinkSync(oldPicturePath);
+         console.log('Old profile picture deleted from local file system:', oldPicturePath);
       }
     }
     
     res.status(200).json({ 
-      message: 'Profile picture updated successfully',
-      profile_picture_url: profilePictureUrl
+      message: 'Profile picture removed successfully'
     });
+
   } catch (err) {
+    console.error('Error removing profile picture:', err);
     res.status(500).json({ error: err.message });
   }
 });

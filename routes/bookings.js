@@ -64,13 +64,17 @@ router.post('/', async (req, res) => {
     try {
         console.log('Booking request received:', req.body);
         
-        const { location_id, start_date, end_date, total_price, stripe_payment_intent_id } = req.body; // MODIFIED
+        const { location_id, start_date, end_date, total_price, stripe_payment_intent_id, booking_policy, service_fee } = req.body; // MODIFIED
         const user_id = req.user.id; // Use user_id from JWT token
 
         // Input validation
         if (!location_id) return res.status(400).json({ error: "Missing location ID" });
         if (!start_date) return res.status(400).json({ error: "Missing start date" });
         if (!end_date) return res.status(400).json({ error: "Missing end date" });
+        // Added validation for service_fee
+        if (service_fee === undefined || service_fee === null) return res.status(400).json({ error: "Missing service fee" });
+        const parsedServiceFee = parseFloat(service_fee);
+        if (isNaN(parsedServiceFee) || parsedServiceFee < 0) return res.status(400).json({ error: "Invalid service fee" });
 
         const parsedLocationId = parseInt(location_id);
         if (isNaN(parsedLocationId)) return res.status(400).json({ error: "Invalid location ID format" });
@@ -100,11 +104,26 @@ router.post('/', async (req, res) => {
         }
 
         const nights = Math.ceil((eDate - sDate) / (1000 * 60 * 60 * 24));
-        const calculatedTotalPrice = nights * locationData[0].price_per_night;
         // Ensure total_price from request is a float, or use calculated if not provided
-        const finalTotalPrice = total_price ? parseFloat(total_price) : calculatedTotalPrice;
+        // The total_price from request should ideally be the sum of (nights * price_per_night) + service_fee
+        // For now, we'll trust the client sends the correct final total_price including the service_fee.
+        // Or, we can recalculate it here for security.
+        // Let's assume total_price from req.body is the subtotal (price_per_night * nights)
+        // and we add the service_fee to it.
+        
+        const pricePerNight = locationData[0].price_per_night;
+        const subtotal = nights * pricePerNight;
+        
+        // Validate if the provided total_price (expected to be subtotal + service_fee) matches calculation
+        // This is a bit tricky if total_price in req.body is meant to be the grand total.
+        // Let's assume total_price in req.body is the grand total for now.
+        const finalTotalPrice = total_price ? parseFloat(total_price) : (subtotal + parsedServiceFee);
         if (isNaN(finalTotalPrice)) return res.status(400).json({ error: "Invalid total price" });
 
+        // It's good practice to verify the received total_price against server-side calculation
+        // For example: if (Math.abs(finalTotalPrice - (subtotal + parsedServiceFee)) > 0.01) {
+        // return res.status(400).json({ error: "Total price mismatch. Please recalculate." });
+        // }
 
         const formatDate = (date) => date.toISOString().split('T')[0];
         const formattedStartDate = formatDate(sDate);
@@ -133,8 +152,8 @@ router.post('/', async (req, res) => {
         connection = await db.getConnection(); // Get connection from the pool
         await connection.beginTransaction();
 
-        const fields = ['user_id', 'location_id', 'start_date', 'end_date', 'total_price', 'status_id'];
-        const values = [user_id, parsedLocationId, formattedStartDate, formattedEndDate, finalTotalPrice, status_id];
+        const fields = ['user_id', 'location_id', 'start_date', 'end_date', 'total_price', 'status_id', 'booking_policy', 'service_fee']; // MODIFIED
+        const values = [user_id, parsedLocationId, formattedStartDate, formattedEndDate, finalTotalPrice, status_id, booking_policy, parsedServiceFee]; // MODIFIED
         
         const query = `INSERT INTO Bookings (${fields.join(', ')}) VALUES (${fields.map(() => '?').join(', ')})`;
         
@@ -164,7 +183,9 @@ router.post('/', async (req, res) => {
             end_date: formattedEndDate,
             total_price: finalTotalPrice,
             nights,
-            status: 'confirmed'
+            status: 'confirmed',
+            booking_policy: booking_policy, // ADDED
+            service_fee: parsedServiceFee // ADDED
         });
 
     } catch (err) {

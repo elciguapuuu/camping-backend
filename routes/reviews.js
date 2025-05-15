@@ -131,4 +131,38 @@ router.get('/:location_id/average', async (req, res) => {
     }
 });
 
+// Update an existing review - Protected (must be logged in and own the review)
+router.put('/:review_id', authenticateToken, async (req, res) => {
+    try {
+        const { review_id } = req.params;
+        const { overall_rating, review_comment } = req.body;
+        const user_id = req.user.id;
+
+        if (!overall_rating) {
+            return res.status(400).json({ error: "Missing overall rating." });
+        }
+        if (overall_rating < 1 || overall_rating > 5) {
+            return res.status(400).json({ error: "Overall rating must be between 1 and 5." });
+        }
+
+        // Verify the review exists and belongs to the user
+        const [review] = await db.query('SELECT * FROM Reviews WHERE review_id = ? AND user_id = ?', [review_id, user_id]);
+
+        if (review.length === 0) {
+            return res.status(404).json({ error: "Review not found or you do not have permission to edit it." });
+        }
+
+        // Update the review
+        await db.query(
+            'UPDATE Reviews SET overall_rating = ?, review_comment = ?, updated_at = CURRENT_TIMESTAMP WHERE review_id = ?',
+            [overall_rating, review_comment || null, review_id]
+        );
+
+        res.json({ message: "Review updated successfully!" });
+    } catch (err) {
+        console.error("Error updating review:", err);
+        res.status(500).json({ error: "Failed to update review", details: err.message });
+    }
+});
+
 module.exports = router;

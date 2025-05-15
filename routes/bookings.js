@@ -130,17 +130,17 @@ router.post('/', async (req, res) => {
         const formattedEndDate = formatDate(eDate);
 
         // Check for booking conflicts (updated logic)
-        const [conflicts] = await db.query(`
-            SELECT COUNT(*) as count 
-            FROM Bookings 
-            WHERE location_id = ? 
-            AND status_id != (SELECT status_id FROM Status WHERE status_name = 'cancelled')
-            AND (start_date < ? AND end_date > ?)
-        `, [parsedLocationId, formattedEndDate, formattedStartDate]);
+        // const [conflicts] = await db.query(`
+        //     SELECT COUNT(*) as count 
+        //     FROM Bookings 
+        //     WHERE location_id = ? 
+        //     AND status_id != (SELECT status_id FROM Status WHERE status_name = 'cancelled')
+        //     AND (start_date < ? AND end_date > ?)
+        // `, [parsedLocationId, formattedEndDate, formattedStartDate]);
 
-        if (conflicts[0].count > 0) {
-            return res.status(409).json({ error: "Location is already booked for these dates" });
-        }
+        // if (conflicts[0].count > 0) {
+        //     return res.status(409).json({ error: "Location is already booked for these dates" });
+        // }
 
         // Get 'confirmed' status ID
         const [statusData] = await db.query('SELECT status_id FROM Status WHERE status_name = ?', ['confirmed']);

@@ -381,5 +381,75 @@ router.get('/location/:locationId', async (req, res) => {
     }
 });
 
+// Cancel a booking
+router.put('/:id/cancel', async (req, res) => {
+    const bookingId = req.params.id;
+    const userId = req.user.id; // Assuming authenticateToken middleware adds user to req
+
+    let connection;
+    try {
+        connection = await db.getConnection();
+        await connection.beginTransaction();
+
+        // 1. Check if the booking exists and belongs to the user
+        const [bookings] = await connection.query(
+            'SELECT * FROM Bookings WHERE booking_id = ? AND user_id = ?',
+            [bookingId, userId]
+        );
+
+        if (bookings.length === 0) {
+            await connection.rollback();
+            return res.status(404).json({ error: 'Booking not found or you do not have permission to cancel it.' });
+        }
+
+        const booking = bookings[0];
+
+        // 2. Check if the booking can be cancelled (e.g., not already cancelled, or past its start date if policy dictates)
+        const [cancelledStatus] = await connection.query('SELECT status_id FROM Status WHERE status_name = ?', ['cancelled']);
+        if (cancelledStatus.length === 0) {
+            await connection.rollback();
+            return res.status(500).json({ error: "Status 'cancelled' not found in database." });
+        }
+        const cancelledStatusId = cancelledStatus[0].status_id;
+
+        if (booking.status_id === cancelledStatusId) {
+            await connection.rollback();
+            return res.status(400).json({ error: 'Booking is already cancelled.' });
+        }
+        
+        // Add any other cancellation policy checks here, e.g., based on start_date
+        // For example:
+        // const today = new Date();
+        // const startDate = new Date(booking.start_date);
+        // if (startDate <= today) { // Or some other policy like "cannot cancel within 24 hours of start"
+        //     await connection.rollback();
+        //     return res.status(400).json({ error: 'Booking cannot be cancelled as it has already started or is too close to the start date.' });
+        // }
+
+
+        // 3. Update the booking status to 'cancelled'
+        await connection.query(
+            'UPDATE Bookings SET status_id = ? WHERE booking_id = ?',
+            [cancelledStatusId, bookingId]
+        );
+
+        // TODO: Handle refunds if applicable. This might involve:
+        // - Checking the booking_policy associated with the booking.
+        // - Interacting with Stripe to process a refund for the stripe_payment_intent_id.
+        // - Logging the refund transaction.
+        // For now, we'll just mark as cancelled.
+
+        await connection.commit();
+        res.json({ message: 'Booking cancelled successfully.', booking_id: bookingId });
+
+    } catch (err) {
+        if (connection) await connection.rollback();
+        console.error('Error cancelling booking:', err);
+        res.status(500).json({ error: 'Failed to cancel booking', details: err.message });
+    } finally {
+        if (connection) connection.release();
+    }
+});
+
 module.exports = router;
 

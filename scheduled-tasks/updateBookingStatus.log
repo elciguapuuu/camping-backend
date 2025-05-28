@@ -1,0 +1,85 @@
+[28/05/2025 12:05:59,98] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+Database initialization error: Error: Access denied for user ''@'localhost' (using password: NO)
+    at Packet.asError (c:\Users\sahir\OneDrive\Documents\Desktop\THOMAS MORE\2ND YEAR\WEB PROGRAMMING\camping\camping-backend\node_modules\mysql2\lib\packets\packet.js:740:17)
+    at ClientHandshake.execute (c:\Users\sahir\OneDrive\Documents\Desktop\THOMAS MORE\2ND YEAR\WEB PROGRAMMING\camping\camping-backend\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (c:\Users\sahir\OneDrive\Documents\Desktop\THOMAS MORE\2ND YEAR\WEB PROGRAMMING\camping\camping-backend\node_modules\mysql2\lib\base\connection.js:475:34)
+    at PacketParser.onPacket (c:\Users\sahir\OneDrive\Documents\Desktop\THOMAS MORE\2ND YEAR\WEB PROGRAMMING\camping\camping-backend\node_modules\mysql2\lib\base\connection.js:93:12)
+    at PacketParser.executeStart (c:\Users\sahir\OneDrive\Documents\Desktop\THOMAS MORE\2ND YEAR\WEB PROGRAMMING\camping\camping-backend\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (c:\Users\sahir\OneDrive\Documents\Desktop\THOMAS MORE\2ND YEAR\WEB PROGRAMMING\camping\camping-backend\node_modules\mysql2\lib\base\connection.js:100:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5) {
+  code: 'ER_ACCESS_DENIED_ERROR',
+  errno: 1045,
+  sqlState: '28000',
+  sqlMessage: "Access denied for user ''@'localhost' (using password: NO)",
+  sql: undefined
+}
+Error updating past bookings to completed: Error: Access denied for user ''@'localhost' (using password: NO)
+    at PromisePool.query (c:\Users\sahir\OneDrive\Documents\Desktop\THOMAS MORE\2ND YEAR\WEB PROGRAMMING\camping\camping-backend\node_modules\mysql2\lib\promise\pool.js:36:22)
+    at getStatusId (c:\Users\sahir\OneDrive\Documents\Desktop\THOMAS MORE\2ND YEAR\WEB PROGRAMMING\camping\camping-backend\scheduled-tasks\updateBookingStatus.js:4:29)
+    at updatePastBookingsToCompleted (c:\Users\sahir\OneDrive\Documents\Desktop\THOMAS MORE\2ND YEAR\WEB PROGRAMMING\camping\camping-backend\scheduled-tasks\updateBookingStatus.js:15:41)
+    at Object.<anonymous> (c:\Users\sahir\OneDrive\Documents\Desktop\THOMAS MORE\2ND YEAR\WEB PROGRAMMING\camping\camping-backend\scheduled-tasks\updateBookingStatus.js:55:1)
+    at Module._compile (node:internal/modules/cjs/loader:1554:14)
+    at Object..js (node:internal/modules/cjs/loader:1706:10)
+    at Module.load (node:internal/modules/cjs/loader:1289:32)
+    at Function._load (node:internal/modules/cjs/loader:1108:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:220:24) {
+  code: 'ER_ACCESS_DENIED_ERROR',
+  errno: 1045,
+  sql: undefined,
+  sqlState: '28000',
+  sqlMessage: "Access denied for user ''@'localhost' (using password: NO)"
+}
+Database connection closed.
+[28/05/2025 12:06:00,47] Finished updateBookingStatus.js 
+ 
+[28/05/2025 12:06:26,54] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+Database initialization error: Error: Access denied for user ''@'localhost' (using password: NO)
+    at Packet.asError (c:\Users\sahir\OneDrive\Documents\Desktop\THOMAS MORE\2ND YEAR\WEB PROGRAMMING\camping\camping-backend\node_modules\mysql2\lib\packets\packet.js:740:17)
+    at ClientHandshake.execute (c:\Users\sahir\OneDrive\Documents\Desktop\THOMAS MORE\2ND YEAR\WEB PROGRAMMING\camping\camping-backend\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (c:\Users\sahir\OneDrive\Documents\Desktop\THOMAS MORE\2ND YEAR\WEB PROGRAMMING\camping\camping-backend\node_modules\mysql2\lib\base\connection.js:475:34)
+    at PacketParser.onPacket (c:\Users\sahir\OneDrive\Documents\Desktop\THOMAS MORE\2ND YEAR\WEB PROGRAMMING\camping\camping-backend\node_modules\mysql2\lib\base\connection.js:93:12)
+    at PacketParser.executeStart (c:\Users\sahir\OneDrive\Documents\Desktop\THOMAS MORE\2ND YEAR\WEB PROGRAMMING\camping\camping-backend\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (c:\Users\sahir\OneDrive\Documents\Desktop\THOMAS MORE\2ND YEAR\WEB PROGRAMMING\camping\camping-backend\node_modules\mysql2\lib\base\connection.js:100:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5) {
+  code: 'ER_ACCESS_DENIED_ERROR',
+  errno: 1045,
+  sqlState: '28000',
+  sqlMessage: "Access denied for user ''@'localhost' (using password: NO)",
+  sql: undefined
+}
+Error updating past bookings to completed: Error: Access denied for user ''@'localhost' (using password: NO)
+    at PromisePool.query (c:\Users\sahir\OneDrive\Documents\Desktop\THOMAS MORE\2ND YEAR\WEB PROGRAMMING\camping\camping-backend\node_modules\mysql2\lib\promise\pool.js:36:22)
+    at getStatusId (c:\Users\sahir\OneDrive\Documents\Desktop\THOMAS MORE\2ND YEAR\WEB PROGRAMMING\camping\camping-backend\scheduled-tasks\updateBookingStatus.js:4:29)
+    at updatePastBookingsToCompleted (c:\Users\sahir\OneDrive\Documents\Desktop\THOMAS MORE\2ND YEAR\WEB PROGRAMMING\camping\camping-backend\scheduled-tasks\updateBookingStatus.js:15:41)
+    at Object.<anonymous> (c:\Users\sahir\OneDrive\Documents\Desktop\THOMAS MORE\2ND YEAR\WEB PROGRAMMING\camping\camping-backend\scheduled-tasks\updateBookingStatus.js:55:1)
+    at Module._compile (node:internal/modules/cjs/loader:1554:14)
+    at Object..js (node:internal/modules/cjs/loader:1706:10)
+    at Module.load (node:internal/modules/cjs/loader:1289:32)
+    at Function._load (node:internal/modules/cjs/loader:1108:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:220:24) {
+  code: 'ER_ACCESS_DENIED_ERROR',
+  errno: 1045,
+  sql: undefined,
+  sqlState: '28000',
+  sqlMessage: "Access denied for user ''@'localhost' (using password: NO)"
+}
+Database connection closed.
+[28/05/2025 12:06:27,09] Finished updateBookingStatus.js 
+ 
+[28/05/2025 12:08:41,64] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+Found 6 bookings to update.
+Successfully updated 6 bookings to "completed".
+Database connection closed.
+[28/05/2025 12:08:42,32] Finished updateBookingStatus.js 
+ 

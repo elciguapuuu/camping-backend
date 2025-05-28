@@ -33,14 +33,14 @@ router.post('/', authenticateToken, async (req, res) => {
             return res.status(403).json({ error: "You can only review completed bookings." });
         }
 
-        // Check if the user already has a review for this location and booking
-        const [existingReviews] = await db.query(
-            'SELECT * FROM Reviews WHERE user_id = ? AND location_id = ? AND booking_id = ?',
-            [user_id, location_id, booking_id]
+        // Check if the user already has a review for this location
+        const [existingLocationReviews] = await db.query(
+            'SELECT review_id FROM Reviews WHERE user_id = ? AND location_id = ?',
+            [user_id, location_id]
         );
 
-        if (existingReviews.length > 0) {
-            return res.status(400).json({ error: "You have already reviewed this booking." });
+        if (existingLocationReviews.length > 0) {
+            return res.status(400).json({ error: "You have already reviewed this location." });
         }
 
         // Insert the review into the database

@@ -943,4 +943,110 @@ router.get('/:location_id/earnings/weekly', authenticateToken, async (req, res) 
     }
 });
 
+// POST /locations/:location_id/unavailability - Add unavailability for a location
+router.post('/:location_id/unavailability', authenticateToken, async (req, res) => {
+    const { location_id } = req.params;
+    const { start_date, end_date, reason } = req.body;
+    const user_id = req.user.id;
+
+    if (!start_date || !end_date) {
+        return res.status(400).json({ error: 'Start date and end date are required.' });
+    }
+
+    let connection;
+    try {
+        connection = await db.getConnection();
+        await connection.beginTransaction();
+
+        // Check if the user owns the location
+        const [locationRows] = await connection.query('SELECT user_id FROM Locations WHERE location_id = ?', [location_id]);
+        if (locationRows.length === 0) {
+            await connection.rollback();
+            return res.status(404).json({ error: 'Location not found.' });
+        }
+        if (locationRows[0].user_id !== user_id) {
+            await connection.rollback();
+            return res.status(403).json({ error: 'You are not authorized to modify this location.' });
+        }
+
+        // Insert the unavailability period
+        const [result] = await connection.query(
+            'INSERT INTO LocationUnavailabilities (location_id, start_date, end_date, reason) VALUES (?, ?, ?, ?)',
+            [location_id, start_date, end_date, reason || null]
+        );
+
+        await connection.commit();
+        res.status(201).json({ message: 'Unavailability period added successfully.', unavailability_id: result.insertId });
+
+    } catch (error) {
+        if (connection) await connection.rollback();
+        console.error('Error adding unavailability:', error);
+        res.status(500).json({ error: 'Failed to add unavailability period.', details: error.message });
+    } finally {
+        if (connection) connection.release();
+    }
+});
+
+// GET /locations/:location_id/unavailability - Get all unavailability periods for a location
+router.get('/:location_id/unavailability', async (req, res) => {
+    const { location_id } = req.params;
+
+    try {
+        const [unavailabilities] = await db.query(
+            'SELECT unavailability_id, start_date, end_date, reason FROM LocationUnavailabilities WHERE location_id = ? ORDER BY start_date ASC',
+            [location_id]
+        );
+        res.json(unavailabilities);
+    } catch (error) {
+        console.error('Error fetching unavailabilities:', error);
+        res.status(500).json({ error: 'Failed to fetch unavailability periods.', details: error.message });
+    }
+});
+
+// DELETE /locations/:location_id/unavailability/:unavailability_id - Delete an unavailability period
+router.delete('/:location_id/unavailability/:unavailability_id', authenticateToken, async (req, res) => {
+    const { location_id, unavailability_id } = req.params;
+    const user_id = req.user.id;
+
+    let connection;
+    try {
+        connection = await db.getConnection();
+        await connection.beginTransaction();
+
+        // Check if the user owns the location
+        const [locationRows] = await connection.query('SELECT user_id FROM Locations WHERE location_id = ?', [location_id]);
+        if (locationRows.length === 0) {
+            await connection.rollback();
+            return res.status(404).json({ error: 'Location not found.' });
+        }
+        if (locationRows[0].user_id !== user_id) {
+            await connection.rollback();
+            return res.status(403).json({ error: 'You are not authorized to modify this location.' });
+        }
+
+        // Check if the unavailability period exists and belongs to the location
+        const [unavailabilityRows] = await connection.query(
+            'SELECT unavailability_id FROM LocationUnavailabilities WHERE unavailability_id = ? AND location_id = ?',
+            [unavailability_id, location_id]
+        );
+        if (unavailabilityRows.length === 0) {
+            await connection.rollback();
+            return res.status(404).json({ error: 'Unavailability period not found for this location.' });
+        }
+
+        // Delete the unavailability period
+        await connection.query('DELETE FROM LocationUnavailabilities WHERE unavailability_id = ?', [unavailability_id]);
+
+        await connection.commit();
+        res.json({ message: 'Unavailability period deleted successfully.' });
+
+    } catch (error) {
+        if (connection) await connection.rollback();
+        console.error('Error deleting unavailability:', error);
+        res.status(500).json({ error: 'Failed to delete unavailability period.', details: error.message });
+    } finally {
+        if (connection) connection.release();
+    }
+});
+
 module.exports = router;

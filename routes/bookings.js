@@ -364,6 +364,7 @@ router.get('/location/:locationId', async (req, res) => {
                    b.end_date, 
                    b.total_price,
                    b.created_at,
+                   b.cancellation_date,
                    u.name as user_name, 
                    s.status_name
             FROM Bookings b

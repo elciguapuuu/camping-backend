@@ -1252,3 +1252,1275 @@ No bookings found that need to be updated to "completed".
 Database connection closed.
 [31/05/2025 14:23:19,62] Finished updateBookingStatus.js 
  
+[31/05/2025 14:28:17,68] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[31/05/2025 14:28:17,99] Finished updateBookingStatus.js 
+ 
+[31/05/2025 14:33:17,66] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[31/05/2025 14:33:18,18] Finished updateBookingStatus.js 
+ 
+[31/05/2025 14:38:17,76] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[31/05/2025 14:38:21,12] Finished updateBookingStatus.js 
+ 
+[31/05/2025 18:43:53,15] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[31/05/2025 18:44:15,62] Finished updateBookingStatus.js 
+ 
+[31/05/2025 23:15:32,04] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[31/05/2025 23:15:39,56] Finished updateBookingStatus.js 
+ 
+[31/05/2025 23:18:17,52] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[31/05/2025 23:18:18,61] Finished updateBookingStatus.js 
+ 
+[31/05/2025 23:23:17,53] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[31/05/2025 23:23:18,09] Finished updateBookingStatus.js 
+ 
+[31/05/2025 23:28:17,56] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[31/05/2025 23:28:17,88] Finished updateBookingStatus.js 
+ 
+[31/05/2025 23:33:17,58] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[31/05/2025 23:33:17,91] Finished updateBookingStatus.js 
+ 
+[01/06/2025  1:08:18,19] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[01/06/2025  1:08:19,74] Finished updateBookingStatus.js 
+ 
+[01/06/2025 13:33:17,62] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[01/06/2025 13:33:19,86] Finished updateBookingStatus.js 
+ 
+[01/06/2025 13:38:17,62] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[01/06/2025 13:38:19,58] Finished updateBookingStatus.js 
+ 
+[01/06/2025 14:14:00,90] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[01/06/2025 14:14:08,79] Finished updateBookingStatus.js 
+ 
+[01/06/2025 14:18:17,32] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[01/06/2025 14:18:18,43] Finished updateBookingStatus.js 
+ 
+[01/06/2025 14:23:17,32] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[01/06/2025 14:23:18,29] Finished updateBookingStatus.js 
+ 
+[01/06/2025 14:28:17,31] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[01/06/2025 14:28:17,64] Finished updateBookingStatus.js 
+ 
+[01/06/2025 14:33:17,35] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[01/06/2025 14:33:18,52] Finished updateBookingStatus.js 
+ 
+[01/06/2025 14:38:17,33] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[01/06/2025 14:38:18,24] Finished updateBookingStatus.js 
+ 
+[01/06/2025 14:43:17,38] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[01/06/2025 14:43:18,58] Finished updateBookingStatus.js 
+ 
+[01/06/2025 14:48:17,36] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[01/06/2025 14:48:17,86] Finished updateBookingStatus.js 
+ 
+[01/06/2025 14:53:17,31] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[01/06/2025 14:53:17,65] Finished updateBookingStatus.js 
+ 
+[01/06/2025 14:58:17,33] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[01/06/2025 14:58:18,96] Finished updateBookingStatus.js 
+ 
+[01/06/2025 15:58:38,46] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[01/06/2025 15:58:40,89] Finished updateBookingStatus.js 
+ 
+[01/06/2025 16:03:17,74] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[01/06/2025 16:03:18,68] Finished updateBookingStatus.js 
+ 
+[01/06/2025 16:08:17,73] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[01/06/2025 16:08:18,16] Finished updateBookingStatus.js 
+ 
+[01/06/2025 16:13:17,79] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[01/06/2025 16:13:18,82] Finished updateBookingStatus.js 
+ 
+[01/06/2025 16:18:17,73] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[01/06/2025 16:18:18,84] Finished updateBookingStatus.js 
+ 
+[01/06/2025 19:30:49,55] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[01/06/2025 19:30:52,04] Finished updateBookingStatus.js 
+ 
+[01/06/2025 19:33:17,19] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[01/06/2025 19:33:17,47] Finished updateBookingStatus.js 
+ 
+[01/06/2025 19:38:17,16] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[01/06/2025 19:38:19,64] Finished updateBookingStatus.js 
+ 
+[01/06/2025 22:04:30,90] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[01/06/2025 22:04:39,41] Finished updateBookingStatus.js 
+ 
+[01/06/2025 22:08:17,52] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[01/06/2025 22:08:19,60] Finished updateBookingStatus.js 
+ 
+[01/06/2025 22:13:17,44] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[01/06/2025 22:13:18,94] Finished updateBookingStatus.js 
+ 
+[01/06/2025 22:18:17,50] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[01/06/2025 22:18:18,79] Finished updateBookingStatus.js 
+ 
+[01/06/2025 22:23:17,48] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[01/06/2025 22:23:18,95] Finished updateBookingStatus.js 
+ 
+[01/06/2025 22:28:17,58] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[01/06/2025 22:28:18,88] Finished updateBookingStatus.js 
+ 
+[01/06/2025 22:59:22,43] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[01/06/2025 22:59:27,29] Finished updateBookingStatus.js 
+ 
+[01/06/2025 23:03:17,94] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[01/06/2025 23:03:18,43] Finished updateBookingStatus.js 
+ 
+[01/06/2025 23:08:18,01] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[01/06/2025 23:08:18,29] Finished updateBookingStatus.js 
+ 
+[01/06/2025 23:13:18,03] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[01/06/2025 23:13:18,62] Finished updateBookingStatus.js 
+ 
+[01/06/2025 23:18:18,10] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[01/06/2025 23:18:18,88] Finished updateBookingStatus.js 
+ 
+[01/06/2025 23:23:18,07] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[01/06/2025 23:23:18,67] Finished updateBookingStatus.js 
+ 
+[01/06/2025 23:28:18,03] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[01/06/2025 23:28:18,32] Finished updateBookingStatus.js 
+ 
+[01/06/2025 23:33:18,05] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[01/06/2025 23:33:18,40] Finished updateBookingStatus.js 
+ 
+[01/06/2025 23:38:18,04] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[01/06/2025 23:38:18,29] Finished updateBookingStatus.js 
+ 
+[01/06/2025 23:43:18,02] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[01/06/2025 23:43:18,62] Finished updateBookingStatus.js 
+ 
+[01/06/2025 23:48:18,02] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[01/06/2025 23:48:18,29] Finished updateBookingStatus.js 
+ 
+[01/06/2025 23:53:18,06] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[01/06/2025 23:53:18,82] Finished updateBookingStatus.js 
+ 
+[01/06/2025 23:58:18,08] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[01/06/2025 23:58:18,92] Finished updateBookingStatus.js 
+ 
+[02/06/2025  6:46:02,97] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[02/06/2025  6:46:19,28] Finished updateBookingStatus.js 
+ 
+[02/06/2025  6:48:17,72] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[02/06/2025  6:48:18,97] Finished updateBookingStatus.js 
+ 
+[02/06/2025  6:53:17,79] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[02/06/2025  6:53:19,08] Finished updateBookingStatus.js 
+ 
+[02/06/2025  6:58:17,71] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[02/06/2025  6:58:19,34] Finished updateBookingStatus.js 
+ 
+[02/06/2025 11:53:17,48] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[02/06/2025 11:53:20,02] Finished updateBookingStatus.js 
+ 
+[02/06/2025 11:58:17,51] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[02/06/2025 11:58:19,50] Finished updateBookingStatus.js 
+ 
+[02/06/2025 12:03:17,46] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[02/06/2025 12:03:18,95] Finished updateBookingStatus.js 
+ 
+[02/06/2025 12:08:17,52] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[02/06/2025 12:08:19,53] Finished updateBookingStatus.js 
+ 
+[02/06/2025 12:13:17,50] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[02/06/2025 12:13:18,69] Finished updateBookingStatus.js 
+ 
+[02/06/2025 12:18:17,51] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[02/06/2025 12:18:19,73] Finished updateBookingStatus.js 
+ 
+[02/06/2025 12:23:17,56] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[02/06/2025 12:23:20,24] Finished updateBookingStatus.js 
+ 
+[02/06/2025 12:28:17,53] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[02/06/2025 12:28:18,53] Finished updateBookingStatus.js 
+ 
+[02/06/2025 12:33:17,49] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[02/06/2025 12:33:17,79] Finished updateBookingStatus.js 
+ 
+[02/06/2025 12:38:17,56] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[02/06/2025 12:38:17,99] Finished updateBookingStatus.js 
+ 
+[02/06/2025 12:43:17,55] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[02/06/2025 12:43:17,86] Finished updateBookingStatus.js 
+ 
+[02/06/2025 12:48:17,57] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[02/06/2025 12:48:17,92] Finished updateBookingStatus.js 
+ 
+[02/06/2025 12:53:17,59] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[02/06/2025 12:53:17,97] Finished updateBookingStatus.js 
+ 
+[02/06/2025 12:58:17,58] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[02/06/2025 12:58:17,96] Finished updateBookingStatus.js 
+ 
+[02/06/2025 13:03:17,58] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[02/06/2025 13:03:17,83] Finished updateBookingStatus.js 
+ 
+[02/06/2025 13:08:17,61] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[02/06/2025 13:08:17,92] Finished updateBookingStatus.js 
+ 
+[02/06/2025 13:13:17,76] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[02/06/2025 13:13:18,87] Finished updateBookingStatus.js 
+ 
+[02/06/2025 13:18:17,61] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[02/06/2025 13:18:18,65] Finished updateBookingStatus.js 
+ 
+[02/06/2025 13:23:17,60] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[02/06/2025 13:23:18,79] Finished updateBookingStatus.js 
+ 
+[02/06/2025 13:28:17,59] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[02/06/2025 13:28:17,89] Finished updateBookingStatus.js 
+ 
+[02/06/2025 13:33:17,58] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[02/06/2025 13:33:17,90] Finished updateBookingStatus.js 
+ 
+[02/06/2025 13:38:17,60] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[02/06/2025 13:38:19,46] Finished updateBookingStatus.js 
+ 
+[02/06/2025 13:43:17,60] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[02/06/2025 13:43:19,75] Finished updateBookingStatus.js 
+ 
+[02/06/2025 13:48:17,64] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[02/06/2025 13:48:19,75] Finished updateBookingStatus.js 
+ 
+[02/06/2025 14:01:08,90] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[02/06/2025 14:01:15,60] Finished updateBookingStatus.js 
+ 
+[02/06/2025 14:03:17,32] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[02/06/2025 14:03:17,64] Finished updateBookingStatus.js 
+ 
+[02/06/2025 14:08:17,33] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[02/06/2025 14:08:18,33] Finished updateBookingStatus.js 
+ 
+[02/06/2025 14:13:17,38] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[02/06/2025 14:13:18,41] Finished updateBookingStatus.js 
+ 
+[02/06/2025 14:18:17,33] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[02/06/2025 14:18:17,64] Finished updateBookingStatus.js 
+ 
+[02/06/2025 14:23:17,42] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[02/06/2025 14:23:18,81] Finished updateBookingStatus.js 
+ 
+[03/06/2025  9:03:17,64] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025  9:03:18,81] Finished updateBookingStatus.js 
+ 
+[03/06/2025  9:08:17,55] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025  9:08:17,84] Finished updateBookingStatus.js 
+ 
+[03/06/2025  9:13:17,59] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025  9:13:17,89] Finished updateBookingStatus.js 
+ 
+[03/06/2025  9:18:17,58] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025  9:18:17,88] Finished updateBookingStatus.js 
+ 
+[03/06/2025  9:23:17,63] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025  9:23:18,65] Finished updateBookingStatus.js 
+ 
+[03/06/2025  9:28:17,62] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025  9:28:18,62] Finished updateBookingStatus.js 
+ 
+[03/06/2025  9:33:17,83] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025  9:33:19,87] Finished updateBookingStatus.js 
+ 
+[03/06/2025  9:38:17,64] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025  9:38:20,62] Finished updateBookingStatus.js 
+ 
+[03/06/2025  9:43:17,62] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025  9:43:18,87] Finished updateBookingStatus.js 
+ 
+[03/06/2025  9:48:17,65] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025  9:48:20,10] Finished updateBookingStatus.js 
+ 
+[03/06/2025  9:53:17,80] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025  9:53:19,48] Finished updateBookingStatus.js 
+ 
+[03/06/2025  9:58:18,03] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025  9:58:24,19] Finished updateBookingStatus.js 
+ 
+[03/06/2025 10:03:17,70] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 10:03:21,30] Finished updateBookingStatus.js 
+ 
+[03/06/2025 13:08:17,95] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 13:08:19,94] Finished updateBookingStatus.js 
+ 
+[03/06/2025 13:13:17,88] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 13:13:19,23] Finished updateBookingStatus.js 
+ 
+[03/06/2025 13:46:31,69] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 13:46:33,56] Finished updateBookingStatus.js 
+ 
+[03/06/2025 14:58:17,67] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 14:58:18,77] Finished updateBookingStatus.js 
+ 
+[03/06/2025 15:03:17,64] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 15:03:17,93] Finished updateBookingStatus.js 
+ 
+[03/06/2025 15:08:17,64] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 15:08:24,07] Finished updateBookingStatus.js 
+ 
+[03/06/2025 15:13:17,68] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 15:13:21,92] Finished updateBookingStatus.js 
+ 
+[03/06/2025 15:18:17,70] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 15:18:19,70] Finished updateBookingStatus.js 
+ 
+[03/06/2025 15:28:17,91] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 15:28:18,84] Finished updateBookingStatus.js 
+ 
+[03/06/2025 15:33:17,84] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 15:33:19,29] Finished updateBookingStatus.js 
+ 
+[03/06/2025 15:38:17,91] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 15:38:19,94] Finished updateBookingStatus.js 
+ 
+[03/06/2025 15:43:17,92] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 15:43:18,84] Finished updateBookingStatus.js 
+ 
+[03/06/2025 17:28:18,07] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 17:28:19,47] Finished updateBookingStatus.js 
+ 
+[03/06/2025 17:33:18,06] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 17:33:19,21] Finished updateBookingStatus.js 
+ 
+[03/06/2025 17:38:18,05] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 17:38:19,19] Finished updateBookingStatus.js 
+ 
+[03/06/2025 17:43:18,05] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 17:43:18,34] Finished updateBookingStatus.js 
+ 
+[03/06/2025 17:48:18,04] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 17:48:18,43] Finished updateBookingStatus.js 
+ 
+[03/06/2025 17:53:18,07] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 17:53:18,34] Finished updateBookingStatus.js 
+ 
+[03/06/2025 17:58:18,10] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 17:58:19,58] Finished updateBookingStatus.js 
+ 
+[03/06/2025 18:03:18,05] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 18:03:19,05] Finished updateBookingStatus.js 
+ 
+[03/06/2025 18:08:18,06] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 18:08:18,97] Finished updateBookingStatus.js 
+ 
+[03/06/2025 18:13:18,13] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 18:13:19,07] Finished updateBookingStatus.js 
+ 
+[03/06/2025 18:18:18,12] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 18:18:18,46] Finished updateBookingStatus.js 
+ 
+[03/06/2025 18:23:18,12] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 18:23:19,28] Finished updateBookingStatus.js 
+ 
+[03/06/2025 18:28:18,13] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 18:28:19,11] Finished updateBookingStatus.js 
+ 
+[03/06/2025 18:33:18,13] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 18:33:19,30] Finished updateBookingStatus.js 
+ 
+[03/06/2025 18:38:17,16] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 18:38:18,03] Finished updateBookingStatus.js 
+ 
+[03/06/2025 18:43:17,20] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 18:43:18,28] Finished updateBookingStatus.js 
+ 
+[03/06/2025 18:48:17,24] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 18:48:18,61] Finished updateBookingStatus.js 
+ 
+[03/06/2025 18:53:17,21] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 18:53:18,06] Finished updateBookingStatus.js 
+ 
+[03/06/2025 18:58:17,20] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 18:58:18,15] Finished updateBookingStatus.js 
+ 
+[03/06/2025 19:03:17,23] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 19:03:18,20] Finished updateBookingStatus.js 
+ 
+[03/06/2025 19:08:17,16] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 19:08:17,44] Finished updateBookingStatus.js 
+ 
+[03/06/2025 19:13:17,18] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 19:13:17,48] Finished updateBookingStatus.js 
+ 
+[03/06/2025 19:18:17,21] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 19:18:17,66] Finished updateBookingStatus.js 
+ 
+[03/06/2025 21:14:26,86] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 21:14:27,93] Finished updateBookingStatus.js 
+ 
+[03/06/2025 21:18:17,62] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 21:18:18,74] Finished updateBookingStatus.js 
+ 
+[03/06/2025 21:23:17,65] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 21:23:18,71] Finished updateBookingStatus.js 
+ 
+[03/06/2025 21:28:17,66] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 21:28:18,64] Finished updateBookingStatus.js 
+ 
+[03/06/2025 21:33:17,65] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 21:33:18,64] Finished updateBookingStatus.js 
+ 
+[03/06/2025 21:38:17,63] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 21:38:17,91] Finished updateBookingStatus.js 
+ 
+[03/06/2025 21:43:17,66] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 21:43:17,95] Finished updateBookingStatus.js 
+ 
+[03/06/2025 21:48:17,65] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 21:48:17,98] Finished updateBookingStatus.js 
+ 
+[03/06/2025 21:53:17,66] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 21:53:17,98] Finished updateBookingStatus.js 
+ 
+[03/06/2025 21:58:17,68] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 21:58:17,97] Finished updateBookingStatus.js 
+ 
+[03/06/2025 22:03:17,71] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 22:03:18,72] Finished updateBookingStatus.js 
+ 
+[03/06/2025 22:08:17,68] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 22:08:18,85] Finished updateBookingStatus.js 
+ 
+[03/06/2025 22:13:17,67] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 22:13:19,07] Finished updateBookingStatus.js 
+ 
+[03/06/2025 22:18:17,74] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 22:18:18,79] Finished updateBookingStatus.js 
+ 
+[03/06/2025 22:23:17,73] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 22:23:18,10] Finished updateBookingStatus.js 
+ 
+[03/06/2025 22:28:17,77] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 22:28:18,72] Finished updateBookingStatus.js 
+ 
+[03/06/2025 22:33:17,79] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 22:33:19,01] Finished updateBookingStatus.js 
+ 
+[03/06/2025 22:38:17,73] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 22:38:18,71] Finished updateBookingStatus.js 
+ 
+[03/06/2025 22:43:17,79] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 22:43:18,13] Finished updateBookingStatus.js 
+ 
+[03/06/2025 22:48:17,95] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[03/06/2025 22:48:21,79] Finished updateBookingStatus.js 
+ 
+[04/06/2025  3:00:03,64] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025  3:00:05,78] Finished updateBookingStatus.js 
+ 
+[04/06/2025 11:18:17,33] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 11:18:18,64] Finished updateBookingStatus.js 
+ 
+[04/06/2025 11:23:17,37] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 11:23:18,61] Finished updateBookingStatus.js 
+ 
+[04/06/2025 11:28:17,30] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 11:28:17,56] Finished updateBookingStatus.js 
+ 
+[04/06/2025 11:33:17,31] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 11:33:17,63] Finished updateBookingStatus.js 
+ 
+[04/06/2025 11:38:17,29] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 11:38:17,65] Finished updateBookingStatus.js 
+ 
+[04/06/2025 11:43:17,29] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 11:43:17,60] Finished updateBookingStatus.js 
+ 
+[04/06/2025 11:48:17,35] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 11:48:17,97] Finished updateBookingStatus.js 
+ 
+[04/06/2025 11:53:17,34] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 11:53:17,67] Finished updateBookingStatus.js 
+ 
+[04/06/2025 11:58:17,38] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 11:58:17,83] Finished updateBookingStatus.js 
+ 
+[04/06/2025 12:03:17,37] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 12:03:18,29] Finished updateBookingStatus.js 
+ 
+[04/06/2025 12:08:17,41] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 12:08:18,43] Finished updateBookingStatus.js 
+ 
+[04/06/2025 12:13:17,41] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 12:13:18,70] Finished updateBookingStatus.js 
+ 
+[04/06/2025 12:18:17,38] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 12:18:17,73] Finished updateBookingStatus.js 
+ 
+[04/06/2025 12:23:17,41] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 12:23:17,74] Finished updateBookingStatus.js 
+ 
+[04/06/2025 12:28:17,37] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 12:28:18,47] Finished updateBookingStatus.js 
+ 
+[04/06/2025 12:33:17,39] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 12:33:17,69] Finished updateBookingStatus.js 
+ 
+[04/06/2025 12:38:17,41] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 12:38:17,68] Finished updateBookingStatus.js 
+ 
+[04/06/2025 12:43:17,43] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 12:43:18,42] Finished updateBookingStatus.js 
+ 
+[04/06/2025 12:48:17,43] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 12:48:17,75] Finished updateBookingStatus.js 
+ 
+[04/06/2025 12:53:17,41] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 12:53:17,74] Finished updateBookingStatus.js 
+ 
+[04/06/2025 12:58:17,38] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 12:58:17,66] Finished updateBookingStatus.js 
+ 
+[04/06/2025 13:03:17,46] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 13:03:18,51] Finished updateBookingStatus.js 
+ 
+[04/06/2025 13:08:17,52] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 13:08:18,48] Finished updateBookingStatus.js 
+ 
+[04/06/2025 13:13:17,43] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 13:13:18,73] Finished updateBookingStatus.js 
+ 
+[04/06/2025 13:18:17,49] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 13:18:18,46] Finished updateBookingStatus.js 
+ 
+[04/06/2025 13:23:17,46] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 13:23:18,58] Finished updateBookingStatus.js 
+ 
+[04/06/2025 13:28:17,49] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 13:28:17,75] Finished updateBookingStatus.js 
+ 
+[04/06/2025 14:37:16,18] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 14:37:18,19] Finished updateBookingStatus.js 
+ 
+[04/06/2025 14:38:17,34] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 14:38:18,36] Finished updateBookingStatus.js 
+ 
+[04/06/2025 14:43:17,42] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 14:43:18,08] Finished updateBookingStatus.js 
+ 
+[04/06/2025 14:48:17,44] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 14:48:18,07] Finished updateBookingStatus.js 
+ 
+[04/06/2025 14:53:17,49] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 14:53:18,03] Finished updateBookingStatus.js 
+ 
+[04/06/2025 14:58:17,45] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 14:58:18,27] Finished updateBookingStatus.js 
+ 
+[04/06/2025 15:03:17,44] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 15:03:18,05] Finished updateBookingStatus.js 
+ 
+[04/06/2025 15:12:33,10] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 15:12:35,95] Finished updateBookingStatus.js 
+ 
+[04/06/2025 15:13:17,92] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 15:13:19,47] Finished updateBookingStatus.js 
+ 
+[04/06/2025 15:18:17,95] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 15:18:18,47] Finished updateBookingStatus.js 
+ 
+[04/06/2025 15:23:17,92] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 15:23:18,21] Finished updateBookingStatus.js 
+ 
+[04/06/2025 15:28:17,95] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 15:28:18,35] Finished updateBookingStatus.js 
+ 
+[04/06/2025 15:33:17,94] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 15:33:18,26] Finished updateBookingStatus.js 
+ 
+[04/06/2025 15:38:17,95] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 15:38:19,09] Finished updateBookingStatus.js 
+ 
+[04/06/2025 15:43:17,93] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 15:43:18,40] Finished updateBookingStatus.js 
+ 
+[04/06/2025 15:48:17,94] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 15:48:18,60] Finished updateBookingStatus.js 
+ 
+[04/06/2025 16:00:08,18] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 16:00:09,15] Finished updateBookingStatus.js 
+ 
+[04/06/2025 16:03:17,46] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 16:03:17,89] Finished updateBookingStatus.js 
+ 
+[04/06/2025 16:08:17,50] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 16:08:17,82] Finished updateBookingStatus.js 
+ 
+[04/06/2025 16:13:17,49] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 16:13:17,80] Finished updateBookingStatus.js 
+ 
+[04/06/2025 16:18:17,51] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 16:18:17,82] Finished updateBookingStatus.js 
+ 
+[04/06/2025 16:23:17,51] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 16:23:17,83] Finished updateBookingStatus.js 
+ 
+[04/06/2025 16:28:17,49] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 16:28:18,00] Finished updateBookingStatus.js 
+ 
+[04/06/2025 23:18:18,07] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 23:18:18,53] Finished updateBookingStatus.js 
+ 
+[04/06/2025 23:23:18,10] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 23:23:19,04] Finished updateBookingStatus.js 
+ 
+[04/06/2025 23:28:18,02] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 23:28:18,48] Finished updateBookingStatus.js 
+ 
+[04/06/2025 23:33:18,03] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 23:33:18,46] Finished updateBookingStatus.js 
+ 
+[04/06/2025 23:38:18,06] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 23:38:18,57] Finished updateBookingStatus.js 
+ 
+[04/06/2025 23:43:18,05] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 23:43:18,37] Finished updateBookingStatus.js 
+ 
+[04/06/2025 23:48:18,01] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 23:48:18,42] Finished updateBookingStatus.js 
+ 
+[04/06/2025 23:53:18,08] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 23:53:18,48] Finished updateBookingStatus.js 
+ 
+[04/06/2025 23:58:18,08] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[04/06/2025 23:58:18,61] Finished updateBookingStatus.js 
+ 
+[05/06/2025  0:03:18,12] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[05/06/2025  0:03:18,62] Finished updateBookingStatus.js 
+ 

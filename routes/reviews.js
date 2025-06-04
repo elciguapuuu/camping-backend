@@ -96,38 +96,30 @@ router.get('/:location_id', async (req, res) => {
 router.get('/:location_id/average', async (req, res) => {
     try {
         const { location_id } = req.params;
-        
         // Check if location exists
-        const [location] = await db.query('SELECT location_id FROM Locations WHERE location_id = ?', [location_id]);
-        
-        if (location.length === 0) {
+        const [locations] = await db.query('SELECT location_id FROM Locations WHERE location_id = ?', [location_id]);
+        if (locations.length === 0) {
             return res.status(404).json({ error: "Location not found" });
         }
 
         // Get average rating and count
-        const [result] = await db.query(`
-            SELECT 
-                AVG(overall_rating) as averageRating, 
-                COUNT(*) as reviewCount
-            FROM Reviews
-            WHERE location_id = ?
-            GROUP BY location_id`, 
+        const [rows] = await db.query(
+            `SELECT AVG(overall_rating) as averageRating, COUNT(*) as reviewCount
+             FROM Reviews
+             WHERE location_id = ?
+             GROUP BY location_id`,
             [location_id]
         );
-
-        if (result.length === 0) {
-            return res.json({ 
-                averageRating: 0,
-                reviewCount: 0
-            });
+        if (!rows || rows.length === 0) {
+            return res.json({ averageRating: 0, reviewCount: 0 });
         }
-
-        res.json({ 
-            averageRating: parseFloat(result[0].averageRating),
-            reviewCount: result[0].reviewCount
+        const row = rows[0];
+        return res.json({
+            averageRating: parseFloat(row.averageRating) || 0,
+            reviewCount: parseInt(row.reviewCount) || 0
         });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        return res.status(500).json({ error: err.message });
     }
 });
 

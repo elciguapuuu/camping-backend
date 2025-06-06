@@ -68,7 +68,7 @@ router.get('/:location_id', async (req, res) => {
         }
 
         const [reviews] = await db.query(`
-            SELECT r.*, u.name as reviewer_name 
+            SELECT r.*, u.name as reviewer_name, u.profile_picture_url as user_profile_picture_url 
             FROM Reviews r
             JOIN Users u ON r.user_id = u.user_id
             WHERE r.location_id = ?

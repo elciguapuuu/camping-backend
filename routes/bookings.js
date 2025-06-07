@@ -145,7 +145,7 @@ router.post('/', async (req, res) => {
         // Log existing unavailabilities for this location to help debug
         try {
             // Corrected SQL string definition using template literals
-            const debugSql = `SELECT unavailability_id, location_id, DATE_FORMAT(start_date, '%Y-%m-%d') as start_date, DATE_FORMAT(end_date, '%Y-%m-%d') as end_date, reason FROM ownerunavailability WHERE location_id = ?`;
+            const debugSql = `SELECT unavailability_id, location_id, DATE_FORMAT(start_date, '%Y-%m-%d') as start_date, DATE_FORMAT(end_date, '%Y-%m-%d') as end_date, reason FROM locationunavailabilities WHERE location_id = ?`;
             const [debugUnavs] = await connection.query(debugSql, [parsedLocationId]);
             console.log(`Existing unavailabilities for location ${parsedLocationId}:`, JSON.stringify(debugUnavs, null, 2));
         } catch (debugError) {
@@ -156,7 +156,7 @@ router.post('/', async (req, res) => {
         // Simplified conflict check for owner unavailability
         const [unavailabilityConflicts] = await connection.query(
             `SELECT COUNT(*) as count
-             FROM ownerunavailability
+             FROM locationunavailabilities
              WHERE location_id = ?
                AND start_date <= ?  -- Unavailability period starts on or before the requested end_date
                AND end_date >= ?    -- Unavailability period ends on or after the requested start_date
@@ -167,7 +167,7 @@ router.post('/', async (req, res) => {
 
         if (unavailabilityConflicts[0].count > 0) {
             await connection.rollback();
-            console.log('Conflict found with ownerunavailability. Booking rejected.');
+            console.log('Conflict found with locationunavailabilities. Booking rejected.');
             return res.status(409).json({ error: "The location is marked as unavailable by the owner for the selected dates." });
         }
         // --- End of new/modified unavailability check ---

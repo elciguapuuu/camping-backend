@@ -122,8 +122,8 @@ router.delete('/delete', authenticateToken, async (req, res) => {
             return res.status(403).json({ error: "Access denied: You can only delete your own account" });
         }
 
-        if (!user_id || !password) {
-            return res.status(400).json({ error: 'User ID and password are required.' });
+        if (!user_id) { // user_id is always required
+            return res.status(400).json({ error: 'User ID is required in the request body.' });
         }
 
         // Fetch user data from the database by user_id
@@ -135,78 +135,59 @@ router.delete('/delete', authenticateToken, async (req, res) => {
 
         const user = userData[0];
 
-        // Compare the provided password with the stored hashed password
-        const isPasswordValid = await bcrypt.compare(password, user.password);
-        
-        if (!isPasswordValid) {
-            return res.status(401).json({ error: 'Incorrect password.' });
-        }
-        
-        // If user has profile picture, delete it
-        if (user.profile_picture_url) {
-            const imagePath = path.join(__dirname, '..', user.profile_picture_url);
-            if (fs.existsSync(imagePath)) {
-                fs.unlinkSync(imagePath);
+        // Conditional password validation based on auth_type
+        if (user.auth_type !== 'google') { // Assuming 'google' is your OAuth type. Adjust if other OAuth types exist.
+            if (!password) {
+                return res.status(400).json({ error: 'Password is required to delete this account.' });
+            }
+            // Ensure user.password exists before comparing (it should for 'local' auth_type)
+            if (!user.password) {
+                console.error(`User ${user_id} with auth_type ${user.auth_type} has no password hash.`);
+                return res.status(500).json({ error: 'Cannot verify password; account data inconsistent.' });
+            }
+            const isPasswordValid = await bcrypt.compare(password, user.password);
+            if (!isPasswordValid) {
+                return res.status(401).json({ error: 'Incorrect password.' });
             }
         }
+        // For 'google' (OAuth) users, password check is skipped.
+        // Authorization is based on JWT and matching user_id.
         
-       
-        const connection = await db.getConnection();
-        await connection.beginTransaction();
-        
-        try {
-            // Delete user's reviews
-            await connection.query('DELETE FROM Reviews WHERE user_id = ?', [user_id]);
-            
-            // Delete user's bookings
-            await connection.query('DELETE FROM Bookings WHERE user_id = ?', [user_id]);
-            
-            // For locations owned by this user:
-            // 1. Get all locations owned by the user
-            const [locations] = await connection.query('SELECT location_id FROM Locations WHERE user_id = ?', [user_id]);
-            
-            // 2. For each location, delete associated records
-            for (const location of locations) {
-                const locationId = location.location_id;
-                
-                // Delete location amenities
-                await connection.query('DELETE FROM LocationAmenities WHERE location_id = ?', [locationId]);
-                
-                // Delete location campsite types
-                await connection.query('DELETE FROM LocationCampsiteTypes WHERE location_id = ?', [locationId]);
-                
-                // Get images to delete files
-                const [images] = await connection.query('SELECT * FROM Images WHERE location_id = ?', [locationId]);
-                
-                // Delete image files
-                for (const image of images) {
-                    const imagePath = path.join(__dirname, '..', image.image_url);
-                    if (fs.existsSync(imagePath)) {
-                        fs.unlinkSync(imagePath);
-                    }
+        // If user has profile picture, delete it from Cloudinary (if applicable)
+        if (user.profile_picture_url && user.profile_picture_url.includes('cloudinary')) {
+            try {
+                // Extract public_id from the Cloudinary URL
+                const parts = user.profile_picture_url.split('/');
+                const publicIdWithFolder = parts.slice(parts.indexOf('upload') + 2).join('/').replace(/\\.[^/.]+$/, "");
+
+                if (publicIdWithFolder) {
+                    await cloudinary.uploader.destroy(publicIdWithFolder);
+                    console.log(`Deleted profile picture ${publicIdWithFolder} from Cloudinary for user ${user_id}`);
                 }
-                
-                // Delete images from database
-                await connection.query('DELETE FROM Images WHERE location_id = ?', [locationId]);
+            } catch (cloudinaryError) {
+                console.error(`Failed to delete profile picture from Cloudinary for user ${user_id}:`, cloudinaryError);
+                // Log error but don't fail the request, as account deactivation is the primary goal.
             }
-            
-            // Delete all locations owned by the user
-            await connection.query('DELETE FROM Locations WHERE user_id = ?', [user_id]);
-            
-            // Finally delete the user
-            await connection.query('DELETE FROM Users WHERE user_id = ?', [user_id]);
-            
-            await connection.commit();
-            
-            res.json({ message: 'Account deleted successfully.' });
-        } catch (error) {
-            await connection.rollback();
-            throw error;
-        } finally {
-            connection.release();
         }
+        // Note: Deletion of local profile pictures (if any) is removed as Cloudinary is primary.
+        
+        // Soft delete the user by marking them as inactive
+        await db.query(
+            'UPDATE Users SET is_active = ?, status = ? WHERE user_id = ?',
+            [false, 'inactive', user_id]
+        );
+            
+        res.json({ message: 'Account deactivated successfully.' });
+
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        // Enhanced error logging for the outer catch block
+        console.error('Failed to deactivate account:', err);
+        res.status(500).json({ 
+            error: 'Failed to deactivate account.', 
+            details: err.message, 
+            sqlState: err.sqlState, // Include SQL-specific error info if available
+            errno: err.errno       // Include SQL-specific error info if available
+        });
     }
 });
 

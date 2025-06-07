@@ -198,16 +198,28 @@ router.get('/search', async (req, res) => {
         // Filter by availability if dates provided
         if (start_date && end_date) {
             sqlQuery += ` AND l.location_id NOT IN (
-                SELECT location_id FROM Bookings 
-                WHERE (start_date <= ? AND end_date >= ?) 
-                OR (start_date <= ? AND end_date >= ?) 
-                OR (start_date >= ? AND end_date <= ?)
-                AND status_id != (SELECT status_id FROM Status WHERE status_name = 'cancelled')
+                SELECT b.location_id FROM Bookings b
+                WHERE 
+                -- Existing booking overlaps with requested period
+                ((b.start_date <= ? AND b.end_date >= ?) OR 
+                 (b.start_date <= ? AND b.end_date >= ?) OR 
+                 (b.start_date >= ? AND b.end_date <= ?))
+                AND b.status_id != (SELECT status_id FROM Status WHERE status_name = 'cancelled')
+            ) AND l.location_id NOT IN (
+                SELECT ou.location_id FROM locationunavailabilities ou
+                WHERE 
+                -- Unavailability period overlaps with requested period
+                ((ou.start_date <= ? AND ou.end_date >= ?) OR
+                 (ou.start_date <= ? AND ou.end_date >= ?) OR
+                 (ou.start_date >= ? AND ou.end_date <= ?))
             )`;
             values.push(
                 end_date, start_date, // Booking starts before checkout and ends after checkin
                 start_date, start_date, // Booking starts before checkin and ends after checkin
-                start_date, end_date   // Booking is completely within requested period
+                start_date, end_date,   // Booking is completely within requested period
+                end_date, start_date, // Unavailability starts before checkout and ends after checkin
+                start_date, start_date, // Unavailability starts before checkin and ends after checkin
+                start_date, end_date   // Unavailability is completely within requested period
             );
         }
 
@@ -938,6 +950,128 @@ router.get('/:location_id/earnings/weekly', authenticateToken, async (req, res) 
     } catch (error) {
         console.error('Error fetching weekly earnings:', error);
         res.status(500).json({ message: 'Error fetching weekly earnings', error: error.message });
+    } finally {
+        if (connection) connection.release();
+    }
+});
+
+// POST to add a new unavailability period for a location
+router.post('/:location_id/unavailability', authenticateToken, async (req, res) => {
+    const { location_id } = req.params;
+    const { start_date, end_date, reason } = req.body;
+    const user_id = req.user.id;
+
+    if (!start_date || !end_date) {
+        return res.status(400).json({ error: 'Start date and end date are required.' });
+    }
+
+    let connection;
+    try {
+        connection = await db.getConnection();
+        await connection.beginTransaction();
+
+        // Check if the location exists and belongs to the user
+        const [locationRows] = await connection.query(
+            'SELECT user_id FROM Locations WHERE location_id = ?',
+            [location_id]
+        );
+
+        if (locationRows.length === 0) {
+            await connection.rollback();
+            return res.status(404).json({ error: 'Location not found' });
+        }
+
+        if (locationRows[0].user_id !== user_id) {
+            await connection.rollback();
+            return res.status(403).json({ error: 'You can only add unavailability to your own locations' });
+        }
+
+        // Insert the unavailability period
+        const [result] = await connection.query(
+            'INSERT INTO locationunavailabilities (location_id, start_date, end_date, reason) VALUES (?, ?, ?, ?)',
+            [location_id, start_date, end_date, reason || null]
+        );
+
+        await connection.commit();
+        res.status(201).json({ message: 'Unavailability period added successfully', unavailability_id: result.insertId });
+
+    } catch (error) {
+        if (connection) await connection.rollback();
+        console.error('Error adding unavailability period:', error); // Keep detailed server log
+        // Enhanced error response to client
+        res.status(500).json({
+            error: 'Failed to add unavailability period',
+            details: error.message,
+            sqlMessage: error.sqlMessage || 'No SQL details available',
+            sqlState: error.sqlState || null,
+            errno: error.errno || null
+        });
+    } finally {
+        if (connection) connection.release();
+    }
+});
+
+// GET all unavailability for a location - Protected
+router.get('/:location_id/unavailability', authenticateToken, async (req, res) => {
+    const { location_id } = req.params;
+    // Ensure the user owns the location or is an admin (if you have admin roles)
+    // For simplicity, this example assumes the user owns the location if they can access this route after auth.
+    // You might want to add a specific check:
+    // const [loc] = await db.query('SELECT user_id FROM Locations WHERE location_id = ?', [location_id]);
+    // if (!loc.length || loc[0].user_id !== req.user.id) {
+    //   return res.status(403).json({ error: "Access denied or location not found." });
+    // }
+
+    try {
+        const [unavailabilities] = await db.query(
+            'SELECT * FROM locationunavailabilities WHERE location_id = ? ORDER BY start_date ASC',
+            [location_id]
+        );
+        res.json(unavailabilities);
+    } catch (err) {
+        console.error("Error fetching unavailabilities:", err);
+        res.status(500).json({ error: err.message, sqlMessage: err.sqlMessage, sqlState: err.sqlState, errno: err.errno });
+    }
+});
+
+// DELETE an unavailability period - Protected
+router.delete('/:location_id/unavailability/:unavailability_id', authenticateToken, async (req, res) => {
+    const { location_id, unavailability_id } = req.params;
+    let connection;
+
+    try {
+        connection = await db.getConnection();
+        await connection.beginTransaction();
+
+        // Optional: Verify the location exists and the user owns it
+        const [locationRows] = await connection.query('SELECT user_id FROM Locations WHERE location_id = ?', [location_id]);
+        if (locationRows.length === 0) {
+            await connection.rollback();
+            return res.status(404).json({ error: 'Location not found.' });
+        }
+        if (locationRows[0].user_id !== req.user.id) {
+            await connection.rollback();
+            return res.status(403).json({ error: 'Access denied. You do not own this location.' });
+        }
+
+        // Verify the unavailability period belongs to the location
+        const [unavailabilityRows] = await connection.query(
+            'SELECT unavailability_id FROM locationunavailabilities WHERE unavailability_id = ? AND location_id = ?',
+            [unavailability_id, location_id]
+        );
+
+        if (unavailabilityRows.length === 0) {
+            await connection.rollback();
+            return res.status(404).json({ error: 'Unavailability period not found for this location.' });
+        }
+
+        await connection.query('DELETE FROM locationunavailabilities WHERE unavailability_id = ?', [unavailability_id]);
+        await connection.commit();
+        res.json({ message: 'Unavailability period deleted successfully.' });
+    } catch (err) {
+        if (connection) await connection.rollback();
+        console.error("Error deleting unavailability:", err);
+        res.status(500).json({ error: err.message, sqlMessage: err.sqlMessage, sqlState: err.sqlState, errno: err.errno });
     } finally {
         if (connection) connection.release();
     }

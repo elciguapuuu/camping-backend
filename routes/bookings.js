@@ -129,18 +129,48 @@ router.post('/', async (req, res) => {
         const formattedStartDate = formatDate(sDate);
         const formattedEndDate = formatDate(eDate);
 
-        // Check for booking conflicts (updated logic)
-        // const [conflicts] = await db.query(`
-        //     SELECT COUNT(*) as count 
-        //     FROM Bookings 
-        //     WHERE location_id = ? 
-        //     AND status_id != (SELECT status_id FROM Status WHERE status_name = 'cancelled')
-        //     AND (start_date < ? AND end_date > ?)
-        // `, [parsedLocationId, formattedEndDate, formattedStartDate]);
+        connection = await db.getConnection(); // Get connection from the pool
+        await connection.beginTransaction();
 
+        // Check for booking conflicts (existing bookings)
+        // const [conflicts] = await connection.query(`...`); // Ensure this uses connection.query if uncommented
         // if (conflicts[0].count > 0) {
+        //     await connection.rollback();
         //     return res.status(409).json({ error: "Location is already booked for these dates" });
         // }
+
+        // --- Start of new/modified unavailability check ---
+        console.log(`Checking unavailability for location_id: ${parsedLocationId}, req_start: ${formattedStartDate}, req_end: ${formattedEndDate}`);
+
+        // Log existing unavailabilities for this location to help debug
+        try {
+            // Corrected SQL string definition using template literals
+            const debugSql = `SELECT unavailability_id, location_id, DATE_FORMAT(start_date, '%Y-%m-%d') as start_date, DATE_FORMAT(end_date, '%Y-%m-%d') as end_date, reason FROM ownerunavailability WHERE location_id = ?`;
+            const [debugUnavs] = await connection.query(debugSql, [parsedLocationId]);
+            console.log(`Existing unavailabilities for location ${parsedLocationId}:`, JSON.stringify(debugUnavs, null, 2));
+        } catch (debugError) {
+            console.error("Error fetching debug unavailabilities:", debugError);
+            // Decide if you want to halt or continue if debug query fails
+        }
+
+        // Simplified conflict check for owner unavailability
+        const [unavailabilityConflicts] = await connection.query(
+            `SELECT COUNT(*) as count
+             FROM ownerunavailability
+             WHERE location_id = ?
+               AND start_date <= ?  -- Unavailability period starts on or before the requested end_date
+               AND end_date >= ?    -- Unavailability period ends on or after the requested start_date
+            `,
+            [parsedLocationId, formattedEndDate, formattedStartDate] // Params: LocationID, Requested EndDate, Requested StartDate
+        );
+        console.log(`Unavailability conflict count: ${unavailabilityConflicts[0].count}`);
+
+        if (unavailabilityConflicts[0].count > 0) {
+            await connection.rollback();
+            console.log('Conflict found with ownerunavailability. Booking rejected.');
+            return res.status(409).json({ error: "The location is marked as unavailable by the owner for the selected dates." });
+        }
+        // --- End of new/modified unavailability check ---
 
         // Get 'confirmed' status ID
         const [statusData] = await db.query('SELECT status_id FROM Status WHERE status_name = ?', ['confirmed']);

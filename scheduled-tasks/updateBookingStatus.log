@@ -3754,3 +3754,15 @@ No bookings found that need to be updated to "completed".
 Database connection closed.
 [07/06/2025 18:28:17,93] Finished updateBookingStatus.js 
  
+[07/06/2025 18:33:17,42] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[07/06/2025 18:33:17,74] Finished updateBookingStatus.js 
+ 
+[07/06/2025 18:38:17,42] Running updateBookingStatus.js 
+Starting task: Update past bookings to completed...
+No bookings found that need to be updated to "completed".
+Database connection closed.
+[07/06/2025 18:38:17,71] Finished updateBookingStatus.js 
+ 

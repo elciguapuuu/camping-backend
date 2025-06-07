@@ -67,7 +67,7 @@ Seeker is a camping spot rental platform. This project contains the backend port
 ### Installation
 1. Clone the repository:
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/elciguapuuu/camping-backend/tree/main
    cd camping-backend
    ```
 2. Install dependencies:
@@ -121,7 +121,7 @@ SESSION_SECRET=another_strong_secret_for_sessions
 
 ### Running the Server
 ```bash
-npm nodemon app.js
+nodemon app.js
 ```
 By default, the server will run on `http://localhost:3001` (or the `PORT` specified in your `.env` file).
 

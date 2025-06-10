@@ -48,7 +48,8 @@ router.post('/', authenticateToken, async (req, res) => {
             latitude: manualLatitude,
             longitude: manualLongitude,
             booking_policy, // Added
-            service_fee_percentage // Added
+            service_fee_percentage, // Added
+            max_guests // Added max_guests
         } = req.body;
         
         // Use user_id from JWT token
@@ -98,10 +99,10 @@ router.post('/', authenticateToken, async (req, res) => {
         // Insert new location with additional fields
         const [locationResult] = await connection.query(
             `INSERT INTO Locations 
-            (user_id, name, description, address, price_per_night, latitude, longitude, city, country, booking_policy, service_fee_percentage) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            (user_id, name, description, address, price_per_night, latitude, longitude, city, country, booking_policy, service_fee_percentage, max_guests) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 
-            [user_id, name, description || null, address, price_per_night, latitude, longitude, city, country, booking_policy || null, service_fee_percentage !== undefined ? service_fee_percentage : 10.00] // Added booking_policy and service_fee_percentage
+            [user_id, name, description || null, address, price_per_night, latitude, longitude, city, country, booking_policy || null, service_fee_percentage !== undefined ? service_fee_percentage : 10.00, max_guests || null] // Added max_guests
         );
 
         const location_id = locationResult.insertId;
@@ -289,6 +290,7 @@ router.get('/owner/:userId', authenticateToken, async (req, res) => {
             earnings_last_week: parseFloat(parseFloat(loc.earnings_last_week).toFixed(2)),
             earnings_last_month: parseFloat(parseFloat(loc.earnings_last_month).toFixed(2)),
             earnings_last_year: parseFloat(parseFloat(loc.earnings_last_year).toFixed(2)),
+            max_guests: loc.max_guests ? parseInt(loc.max_guests) : null // Added max_guests processing
         }));
         
         res.json(processedLocations);
@@ -317,6 +319,7 @@ router.put('/:id', authenticateToken, async (req, res) => {
       amenities, // Added for updating amenities
       booking_policy, // Added
       service_fee_percentage, // Added
+      max_guests, // Added max_guests
       images_to_delete  // Array of public_ids of images to delete
     } = req.body;
 
@@ -385,6 +388,7 @@ router.put('/:id', authenticateToken, async (req, res) => {
     if (req.body.hasOwnProperty('longitude')) { updates.push('longitude = ?'); values.push(longitude); }
     if (req.body.hasOwnProperty('booking_policy')) { updates.push('booking_policy = ?'); values.push(booking_policy); }
     if (req.body.hasOwnProperty('service_fee_percentage')) { updates.push('service_fee_percentage = ?'); values.push(service_fee_percentage); }
+    if (req.body.hasOwnProperty('max_guests')) { updates.push('max_guests = ?'); values.push(max_guests === '' || max_guests === null ? null : parseInt(max_guests)); } // Added max_guests
 
     if (updates.length > 0) {
       const updateValues = [...values, locationId];
@@ -824,7 +828,7 @@ router.get('/:id', async (req, res) => {
     
     // Get location details
     const [locations] = await connection.query(
-      'SELECT * FROM Locations WHERE location_id = ?',
+      'SELECT * FROM Locations WHERE location_id = ?', // This will include max_guests
       [locationId]
     );
     
@@ -833,6 +837,12 @@ router.get('/:id', async (req, res) => {
     }
     
     const location = locations[0];
+    // Ensure max_guests is an integer or null
+    if (location.max_guests !== null && location.max_guests !== undefined) {
+        location.max_guests = parseInt(location.max_guests);
+    } else {
+        location.max_guests = null;
+    }
     
     // Get campsite types
     const [campsiteTypes] = await connection.query(
@@ -860,7 +870,7 @@ router.get('/:id', async (req, res) => {
 // Get a specific location by ID - Public
 router.get('/:id', async (req, res) => {
     try {
-        const [location] = await db.query(`
+        const [locationRows] = await db.query(` 
             SELECT 
                 l.*, 
                 COALESCE(AVG(r.overall_rating), 0) as average_rating,
@@ -871,14 +881,20 @@ router.get('/:id', async (req, res) => {
             GROUP BY l.location_id
         `, [req.params.id]);
         
-        if (location.length === 0) {
+        if (locationRows.length === 0) {
             return res.status(404).json({ error: 'Location not found' });
         }
-        // Ensure numeric types for average_rating
-        location[0].average_rating = parseFloat(location[0].average_rating);
-        location[0].total_reviews = parseInt(location[0].total_reviews);
+        const location = locationRows[0];
+        // Ensure numeric types for average_rating and max_guests
+        location.average_rating = parseFloat(location.average_rating);
+        location.total_reviews = parseInt(location.total_reviews);
+        if (location.max_guests !== null && location.max_guests !== undefined) {
+            location.max_guests = parseInt(location.max_guests);
+        } else {
+            location.max_guests = null;
+        }
 
-        res.json(location[0]);
+        res.json(location);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

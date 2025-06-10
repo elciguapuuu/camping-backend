@@ -231,6 +231,31 @@ router.post('/', async (req, res) => {
     }
 });
 
+// New route to create a Stripe Payment Intent
+router.post('/create-payment-intent', async (req, res) => {
+  const { amount, currency } = req.body;
+
+  if (!amount || !currency) {
+    return res.status(400).json({ error: 'Amount and currency are required' });
+  }
+
+  try {
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: Math.round(amount * 100), // Stripe expects amount in cents
+      currency: currency,
+      // In the latest version of the API, specifying the `automatic_payment_methods` parameter is optional because Stripe enables its functionality by default.
+      automatic_payment_methods: {
+        enabled: true,
+      },
+    });
+
+    res.json({ clientSecret: paymentIntent.client_secret });
+  } catch (error) {
+    console.error('Error creating Payment Intent:', error);
+    res.status(500).json({ error: 'Failed to create Payment Intent', details: error.message });
+  }
+});
+
 // Cancel a booking
 router.patch('/:id/cancel', async (req, res) => {
     let connection; 
